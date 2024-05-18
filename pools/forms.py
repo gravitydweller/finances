@@ -14,3 +14,7 @@ class PoolTransferForm(forms.ModelForm):
         model = PoolTransfer
         fields = ['date', 'source_pool', 'destination_pool', 'amount']
 
+class PoolUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Pool
+        fields = ['allocated_procentage', 'allocated_fixed']

@@ -72,7 +72,7 @@
                                     <tr>
                                         <td><a href="{% url 'pool_detail' pool.id %}">{{ pool.name }}</td>
                                         <td>{{ pool.type }}</td>
-                                        <td>{{ pool.current_balance }}</td>
+                                        <td>{{ pool.current_balance|floatformat:2 }}</td>
                                         <td>{{ pool.allocated_procentage }}</td>
                                         <td>{{ pool.allocated_fixed }}</td>
                                     </tr>
