@@ -1,0 +1,92 @@
+<!-- pools/templates/pools/pool_home.html -->
+
+{% extends 'layouts/mybase.html' %}
+
+{% block content %}
+
+
+<!-- PLOT OF POOL BALANCES -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Pool Balances</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="poolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('poolChart').getContext('2d');
+                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
+                                var poolChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: chartData.pool_names,
+                                        datasets: [{
+                                            label: 'Current Balance',
+                                            data: chartData.current_balances,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                            borderColor: 'rgba(54, 162, 235, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- ALL POOLS -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Pool List</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Current Balance</th>
+                                    <th>Allocated Percentage</th>
+                                    <th>Allocated Fixed</th>
+                                </thead>
+                                <tbody>
+                                    {% for pool in pools %}
+                                    <tr>
+                                        <td><a href="{% url 'pool_detail' pool.id %}">{{ pool.name }}</td>
+                                        <td>{{ pool.type }}</td>
+                                        <td>{{ pool.current_balance }}</td>
+                                        <td>{{ pool.allocated_procentage }}</td>
+                                        <td>{{ pool.allocated_fixed }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'pool_transfer_create' %}" class="btn btn-primary">Transfer Between Pools</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

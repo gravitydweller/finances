@@ -3,7 +3,7 @@
 <!--
     dodat allocation amonts barchart with values for each pool
 -->
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/mybase.html' %}
 
 {% block content %}
 <div class="content">
@@ -19,7 +19,6 @@
                         <!-- Display other income details here -->
                         <a href="{% url 'income_update' income.id %}" class="btn btn-primary">Edit</a>
                         <a href="{% url 'income_delete' income.id %}" class="btn btn-danger">Delete</a>
-                        <a href="{% url 'income_list' %}" class="btn btn-secondary">Back to List</a>
                     </div>
                 </div>
             </div>

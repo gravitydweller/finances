@@ -1,0 +1,27 @@
+<!-- pools/templates/pools/pool_detail.html -->
+
+{% extends 'layouts/mybase.html' %}
+
+{% block title %}Pool Details{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">{{ pool.name }} Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Type: {{ pool.type }}</p>
+                        <p>Current Balance: {{ pool.current_balance }}</p>
+                        <p>Allocated Percentage: {{ pool.allocated_procentage }}</p>
+                        <p>Allocated Fixed: {{ pool.allocated_fixed }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

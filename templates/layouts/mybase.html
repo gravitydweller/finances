@@ -1,0 +1,63 @@
+<!-- templates/layouts/mybase.html -->
+
+<!DOCTYPE html>
+{% load i18n static admin_black %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+{% get_direction as direction %}
+{% get_admin_setting as admin_setting %}
+<html lang="en">
+
+<head>
+    {% include 'includes/head.html' %}
+    {% block extrahead %}{% endblock extrahead %}
+    {% block extrastyle %}{% endblock extrastyle %}
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="{% block bodyclass %}{% endblock bodyclass %}">
+    <div class="wrapper">
+        <div class="sidebar" data-color="purple" data-background-color="white" data-image="{% static 'assets/img/sidebar-1.jpg' %}">
+            <div class="logo"><a href="#" class="simple-text logo-normal">
+                    tilen's finances
+                </a></div>
+            <div class="sidebar-wrapper">
+                <!-- INCOME BUTTON -->
+                <ul class="nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'income_home' %}">
+                            <i class="material-icons">receipt</i>
+                            <p>Income</p>
+                        </a>
+                    </li>
+                <!-- POOL BUTTON -->
+                <ul class="nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'pool_home' %}">
+                            <i class="material-icons">token</i>
+                            <p>Pool</p>
+                        </a>
+                    </li>
+                    <!-- Add more sidebar items as needed -->
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            {% block navigation %}
+            {% include 'includes/navigation.html' %}
+            {% endblock navigation %}
+            {% block content %}{% endblock content %}
+            {% block footer %}
+            {% include 'includes/footer.html' %}
+            {% endblock footer %}
+        </div>
+    </div>
+    {% block fixed-plugin %}
+    {% include 'includes/fixed-plugin.html' %}
+    {% endblock fixed-plugin %}
+    {% include 'includes/scripts.html' %}
+    {% block extrajs %}{% endblock extrajs %}
+</body>
+
+</html>

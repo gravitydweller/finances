@@ -1,0 +1,106 @@
+<!-- incomes/templates/income/income_home.html -->
+
+{% extends 'layouts/mybase.html' %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+
+        <!-- ALL INCOME BUTTON -->
+        <a href="{% url 'income_create' %}" class="btn btn-primary">Add Income</a>
+
+        <!-- PLOT OF INCOMES OVER TIME -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Incomes Over Time</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="incomeChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('incomeChart').getContext('2d');
+                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
+                                var incomeChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: chartData.dates,
+                                        datasets: [{
+                                            label: 'Income',
+                                            data: chartData.amounts,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                            borderColor: 'rgba(54, 162, 235, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'day'
+                                                },
+                                                distribution: 'linear'
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LATEST INCOMES LIST -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Income List</h4>
+                        <p class="card-category">Here is a list of all incomes:</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class=" text-primary">
+                                    <th>Employer</th>
+                                    <th>Tag</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Allocated</th>
+                                    <th>Attachment</th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    {% for income in incomes %}
+                                    <tr>
+                                        <td>{{ income.employer }}</td>
+                                        <td>{{ income.tag }}</td>
+                                        <td>{{ income.amount }}</td>                          
+                                        <td>{{ income.date }}</td>
+                                        <td>{{ income.allocated }}</td>
+                                        <td>
+                                            {% if income.attachment %}
+                                                <a href="{{ income.attachment.url }}">file</a>
+                                            {% else %}
+                                                No file
+                                            {% endif %}
+                                        </td>
+                                        <td><a href="{% url 'income_detail' income.id %}">view details</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>       
+    </div>
+</div>
+{% endblock content %}
