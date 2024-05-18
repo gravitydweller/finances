@@ -30,6 +30,6 @@ class Income(models.Model):
     allocated = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Income: {self.amount} from {self.employer} ({self.date})"
+        return f"{self.amount} from {self.employer}"
     
     

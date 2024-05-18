@@ -1,0 +1,59 @@
+[
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "food",
+            "source_pool": "basic expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "self-care",
+            "source_pool": "basic expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "NLB-bill",
+            "source_pool": "rigid expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "weed",
+            "source_pool": "basic expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "e-bay",
+            "source_pool": "soft expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "gas",
+            "source_pool": "basic expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "volt/glovo",
+            "source_pool": "basic expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "emergency cost",
+            "source_pool": "hard times"
+        }
+    }
+    
+]

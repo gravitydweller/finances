@@ -53,12 +53,17 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_browser_reload",
-
+    
     "home",
+    
     "incomes",
     "pools",
     "allocations",
     "expenses",
+
+    "chartjs",
+
+
 ]
 
 MIDDLEWARE = [

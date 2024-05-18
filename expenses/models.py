@@ -14,7 +14,16 @@ class ExpenseTag(models.Model):
         return f"{self.name}"
 
 
+class ExpenseChategory(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+
 class Expense(models.Model):
+
 
     tag = models.ForeignKey(ExpenseTag, on_delete=models.CASCADE)
     date = models.DateField()
@@ -22,7 +31,7 @@ class Expense(models.Model):
     amount = models.FloatField()
     description = models.CharField(max_length=200, default='', blank=True, null=True)
     attachment = models.FileField(upload_to='expenses/attachments/', blank=True, null=True)
-
+    chategory = models.ForeignKey(ExpenseChategory, default='', on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.tag} - {self.date} - {self.description}"
 

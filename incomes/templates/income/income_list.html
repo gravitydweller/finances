@@ -1,0 +1,39 @@
+<!-- incomes/templates/income/income_list.html -->
+
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Income List</h4>
+                        <p class="card-category">Here is a list of all incomes:</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class=" text-primary">
+                                    <th>Income</th>
+                                    <th>Date</th>
+                                </thead>
+                                <tbody>
+                                    {% for income in incomes %}
+                                    <tr>
+                                        <td><a href="{% url 'income_detail' income.id %}">{{ income }}</a></td>
+                                        <td>{{ income.date }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

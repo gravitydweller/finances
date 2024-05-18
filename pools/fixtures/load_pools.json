@@ -1,0 +1,68 @@
+[
+    {
+        "model": "pools.pool",
+        "pk": 1,
+        "fields": {
+            "name": "hard times",
+            "type": "reserve",
+            "current_balance": 0.00,
+            "allocated_procentage": 11.00,
+            "allocated_fixed": 0.00
+        }
+    },
+    {
+        "model": "pools.pool",
+        "pk": 2,
+        "fields": {
+            "name": "good times",
+            "type": "reserve",
+            "current_balance": 0.00,
+            "allocated_procentage": 11.00,
+            "allocated_fixed": 0.00
+        }
+    },
+    {
+        "model": "pools.pool",
+        "pk": 3,
+        "fields": {
+            "name": "rigid expenses",
+            "type": "cost",
+            "current_balance": 0.00,
+            "allocated_procentage": 31.00,
+            "allocated_fixed": 0.00
+        }
+    },
+    {
+        "model": "pools.pool",
+        "pk": 4,
+        "fields": {
+            "name": "basic expenses",
+            "type": "cost",
+            "current_balance": 0.00,
+            "allocated_procentage": 42.00,
+            "allocated_fixed": 0.00
+        }
+    },
+    {
+        "model": "pools.pool",
+        "pk": 5,
+        "fields": {
+            "name": "soft expenses",
+            "type": "cost",
+            "current_balance": 0.00,
+            "allocated_procentage": 5.00,
+            "allocated_fixed": 0.00
+        }
+    },
+    {
+        "model": "pools.pool",
+        "pk": 6,
+        "fields": {
+            "name": "volt",
+            "type": "investment",
+            "current_balance": 0.00,
+            "allocated_procentage": 0.00,
+            "allocated_fixed": 45.00
+        }
+    }
+]
