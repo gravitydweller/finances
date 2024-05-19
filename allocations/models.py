@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
 from incomes.models import Income
-from pools.models import Pool
+from pools.models import Pool, BalanceHistory
 
 class IncomeAllocation(models.Model):
     income = models.OneToOneField(Income, on_delete=models.CASCADE, primary_key=True)
@@ -37,6 +37,9 @@ def allocate_income_to_pools(income_allocation_instance):
         pool_allocation_total = pool_allocation_proportion + pool.allocated_fixed
         pool.current_balance += pool_allocation_total
         pool.save()
+
+        # Update balance history
+        BalanceHistory.objects.create(pool=pool, balance=pool.current_balance)
 
 '''  # NEW CODE HERE:
     # If income amount is smaller than total allocation fixed:

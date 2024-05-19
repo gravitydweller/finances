@@ -36,7 +36,55 @@
                 </div>
             </div>
         </div>
+
+        <!-- Line plot of balances over time -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Balance Over Time</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="balanceChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('balanceChart').getContext('2d');
+                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
+                                var balanceChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: chartData.dates,
+                                        datasets: [{
+                                            label: 'Balance',
+                                            data: chartData.balances,
+                                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'day'
+                                                },
+                                                distribution: 'linear'
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
+
 

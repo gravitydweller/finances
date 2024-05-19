@@ -15,6 +15,23 @@ class Pool(models.Model):
         return f"{self.name}"
 
 
+
+
+
+class BalanceHistory(models.Model):
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    balance = models.FloatField()
+
+    def __str__(self):
+        return f"{self.pool.name} - {self.date}"
+
+
+
+
+
+
+
 class PoolTransfer(models.Model):
     date = models.DateField()
     source_pool = models.ForeignKey(Pool, related_name='transfers_from', on_delete=models.CASCADE)

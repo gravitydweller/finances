@@ -3,7 +3,7 @@
 from django.forms.models import model_to_dict
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Pool, PoolTransfer
+from .models import Pool, BalanceHistory
 from .forms import PoolForm, PoolTransferForm, PoolUpdateForm
 
 
@@ -69,10 +69,24 @@ def pool_home(request):
 def pool_detail(request, pool_id):
     pool = get_object_or_404(Pool, id=pool_id)
     if request.method == 'POST':
-        form = PoolUpdateForm(request.POST, instance=pool)
+        form = PoolForm(request.POST, instance=pool)
         if form.is_valid():
             form.save()
-            return redirect('pool_home')  # Redirect to the same page to see changes
     else:
-        form = PoolUpdateForm(instance=pool)
-    return render(request, 'pool/pool_detail.html', {'pool': pool, 'form': form})
+        form = PoolForm(instance=pool)
+
+    # Fetch balance history data
+    balance_history = BalanceHistory.objects.filter(pool=pool).order_by('date')
+    dates = [entry.date.strftime('%Y-%m-%d') for entry in balance_history]
+    balances = [entry.balance for entry in balance_history]
+
+    chart_data = {
+        'dates': dates,
+        'balances': balances,
+    }
+
+    return render(request, 'pool/pool_detail.html', {
+        'pool': pool,
+        'form': form,
+        'chart_data': json.dumps(chart_data),
+    })
