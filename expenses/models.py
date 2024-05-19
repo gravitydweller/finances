@@ -23,8 +23,6 @@ class ExpenseChategory(models.Model):
 
 
 class Expense(models.Model):
-
-
     tag = models.ForeignKey(ExpenseTag, on_delete=models.CASCADE)
     date = models.DateField()
     bill_number = models.CharField(max_length=200, default='', blank=True, null=True)

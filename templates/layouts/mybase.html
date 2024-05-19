@@ -25,21 +25,26 @@
             <div class="sidebar-wrapper">
                 <!-- INCOME BUTTON -->
                 <ul class="nav">
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'income_home' %}">
                             <i class="material-icons">receipt</i>
                             <p>Income</p>
                         </a>
                     </li>
-                <!-- POOL BUTTON -->
-                <ul class="nav">
-                    <li class="nav-item active">
+                    <!-- EXPENSE BUTTON -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'expense_home' %}">
+                            <i class="material-icons">money_off</i>
+                            <p>Expenses</p>
+                        </a>
+                    </li>
+                    <!-- POOL BUTTON -->
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'pool_home' %}">
                             <i class="material-icons">token</i>
                             <p>Pools</p>
                         </a>
                     </li>
-                    <!-- Add more sidebar items as needed -->
                 </ul>
             </div>
         </div>
@@ -61,3 +66,4 @@
 </body>
 
 </html>
+

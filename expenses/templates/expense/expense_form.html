@@ -1,0 +1,30 @@
+<!-- expenses/templates/expense/expense_form.html -->
+
+{% extends 'layouts/mybase.html' %}
+
+{% block title %}{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-header card-header-primary">
+                            <h4 class="card-title">{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}</h4>
+                        </div>
+                        <div class="card-body">
+                            {{ form.as_p }}
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Update{% else %}Create{% endif %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

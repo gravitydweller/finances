@@ -1,0 +1,21 @@
+[
+    {
+        "model": "expenses.expensechategory",
+        "fields": {
+            "name": "normal expense"
+        }
+    },
+    {
+        "model": "expenses.expensechategory",
+        "fields": {
+            "name": "utility expense"
+        }
+    },
+    {
+        "model": "expenses.expensechategory",
+        "fields": {
+            "name": "emergency expense"
+        }
+    }
+    
+]

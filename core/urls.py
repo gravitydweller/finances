@@ -12,6 +12,7 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path("incomes/", include('incomes.urls')),
     path("pools/", include('pools.urls')),
+    path('expenses/', include('expenses.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

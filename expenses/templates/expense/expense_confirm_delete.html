@@ -1,0 +1,26 @@
+<!-- expenses/templates/expense/expense_confirm_delete.html -->
+
+{% extends 'layouts/mybase.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Are you sure you want to delete this expense?</h2>
+    <p><strong>Tag:</strong> {{ expense.tag }}</p>
+    <p><strong>Category:</strong> {{ expense.chategory }}</p>
+    <p><strong>Date:</strong> {{ expense.date }}</p>
+    <p><strong>Amount:</strong> {{ expense.amount }}</p>
+    <p><strong>Description:</strong> {{ expense.description }}</p>
+    <p><strong>Attachment:</strong>
+        {% if expense.attachment %}
+            <a href="{{ expense.attachment.url }}">Download</a>
+        {% else %}
+            No file
+        {% endif %}
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <a href="{% url 'expense_home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

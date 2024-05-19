@@ -1,0 +1,37 @@
+<!-- expenses/templates/expense/expense_detail.html -->
+
+{% extends 'layouts/mybase.html' %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Expense Detail</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Expense on {{ expense.date }}: {{ expense.amount }} €</p>
+                        <p><strong>Tag:</strong> {{ expense.tag }}</p>
+                        <p><strong>Category:</strong> {{ expense.chategory }}</p>
+                        <p><strong>Description:</strong> {{ expense.description }}</p>
+                        <p><strong>Attachment:</strong>
+                            {% if expense.attachment %}
+                                <a href="{{ expense.attachment.url }}">Download</a>
+                            {% else %}
+                                No file
+                            {% endif %}
+                        </p>
+                        <a href="{% url 'expense_update' expense.id %}" class="btn btn-primary">Edit</a>
+                        <form method="post" action="{% url 'expense_delete' expense.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
