@@ -5,7 +5,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from pools.models import Pool
 
-
 class ExpenseTag(models.Model):
     name = models.CharField(max_length=50)
     source_pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
@@ -21,15 +20,14 @@ class ExpenseChategory(models.Model):
         return f"{self.name}"
 
 
-
 class Expense(models.Model):
-    tag = models.ForeignKey(ExpenseTag, on_delete=models.CASCADE)
+    tag = models.ForeignKey(ExpenseTag, on_delete=models.SET_NULL, null=True)
     date = models.DateField()
     bill_number = models.CharField(max_length=200, default='', blank=True, null=True)
     amount = models.FloatField()
     description = models.CharField(max_length=200, default='', blank=True, null=True)
     attachment = models.FileField(upload_to='expenses/attachments/', blank=True, null=True)
-    chategory = models.ForeignKey(ExpenseChategory, default='', on_delete=models.CASCADE)
+    chategory = models.ForeignKey(ExpenseChategory, default='', on_delete=models.SET_NULL, null=True)
     def __str__(self):
         return f"{self.tag} - {self.date} - {self.description}"
 

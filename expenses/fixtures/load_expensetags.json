@@ -54,6 +54,13 @@
             "name": "emergency cost",
             "source_pool": "hard times"
         }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "volt expense",
+            "source_pool": "volt"
+        }
     }
     
 ]

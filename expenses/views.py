@@ -20,7 +20,7 @@ def expense_home(request):
         form = ExpenseForm()
 
     # EXPENSE LIST
-    expenses = Expense.objects.all()
+    expenses_list = Expense.objects.all().order_by('-date')
 
     # DATA FOR CHART
     expenses = Expense.objects.all().order_by('date')
@@ -34,7 +34,7 @@ def expense_home(request):
     }
 
     return render(request, 'expense/expense_home.html', {
-        'expenses': expenses,
+        'expenses': expenses_list,
         'form': form,
         'chart_data': json.dumps(chart_data),
     })

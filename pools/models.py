@@ -20,11 +20,25 @@ class Pool(models.Model):
 
 class BalanceHistory(models.Model):
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     balance = models.FloatField()
+
+
+    def update_pool_balances(expense):
+        pool = expense.tag.source_pool
+        pool.current_balance -= expense.amount
+        pool.save()
+
+        # Create a new balance history entry
+        BalanceHistory.objects.create(
+            pool=pool,
+            date=expense.date,  # Set date to match the expense date
+            balance=pool.current_balance
+        )
 
     def __str__(self):
         return f"{self.pool.name} - {self.date}"
+
 
 
 

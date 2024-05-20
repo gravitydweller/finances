@@ -16,6 +16,12 @@
         "fields": {
             "name": "emergency expense"
         }
+    },
+    {
+        "model": "expenses.expensechategory",
+        "fields": {
+            "name": "volt expense"
+        }
     }
     
 ]
