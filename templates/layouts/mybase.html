@@ -19,9 +19,11 @@
 <body class="{% block bodyclass %}{% endblock bodyclass %}">
     <div class="wrapper">
         <div class="sidebar" data-color="purple" data-background-color="white" data-image="{% static 'assets/img/sidebar-1.jpg' %}">
-            <div class="logo"><a href="#" class="simple-text logo-normal">
+            <div class="logo">
+                <a href="{% url 'home_home' %}" class="simple-text logo-normal">  <!-- Update this line -->
                     tilen's finances
-                </a></div>
+                </a>
+            </div>
             <div class="sidebar-wrapper">
                 <!-- INCOME BUTTON -->
                 <ul class="nav">
@@ -66,4 +68,3 @@
 </body>
 
 </html>
-
