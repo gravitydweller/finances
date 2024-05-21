@@ -3,7 +3,6 @@
 from django.db import models
 from decimal import Decimal
 
-
 INCOME_TAG_CHOICES =[
     ('Salary', 'Salary'),
     ('Regres', 'Regres'),
@@ -12,7 +11,6 @@ INCOME_TAG_CHOICES =[
     ('Gift', 'Gift'),
 ]
 
-
 class Employer(models.Model):
     name = models.CharField(max_length=100)
 
@@ -20,7 +18,6 @@ class Employer(models.Model):
         return self.name
 
 class Income(models.Model):
-
     employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, blank=True, null=True)
     tag = models.CharField(max_length=50, choices=INCOME_TAG_CHOICES,blank=True, null=True)
     amount = models.FloatField()

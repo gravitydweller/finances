@@ -1,8 +1,11 @@
 # incomes/views.py
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, redirect
 from .models import Income
 from .forms import IncomeForm
+from pools.models import Pool
+from allocations.models import IncomeAllocation
+from allocations.forms import IncomeAllocationForm
 
 import json
 from io import BytesIO
@@ -46,6 +49,8 @@ def income_delete(request, income_id):
 
 
 ##################################################################################################
+# INCOME HOME VIEW
+##################################################################################################
 
 def income_home(request):
     # CREATE NEW INCOME
@@ -75,4 +80,39 @@ def income_home(request):
         'incomes': incomes,
         'form': form,
         'chart_data': json.dumps(chart_data),
+    })
+
+##################################################################################################
+# INCOME DETAILED VIEW
+##################################################################################################
+
+def calculate_allocations(income_amount):
+    pools = Pool.objects.all()
+    total_fixed_amount = sum(pool.allocated_fixed for pool in pools)
+    allocation_amount_fixed = min(total_fixed_amount, income_amount)
+    allocation_amount_proportion = income_amount - allocation_amount_fixed
+
+    allocations = []
+    for pool in pools:
+        pool_allocation_proportion = (pool.allocated_procentage / 100) * allocation_amount_proportion
+        pool_allocation_total = pool_allocation_proportion + pool.allocated_fixed
+        allocations.append({
+            'pool': pool.name,
+            'allocated_amount': pool_allocation_total
+        })
+    return allocations
+
+
+def income_detail(request, income_id):
+    income = get_object_or_404(Income, id=income_id)
+    allocations = calculate_allocations(income.amount)
+
+    if request.method == 'POST' and 'allocate' in request.POST:
+        IncomeAllocation.objects.create(income=income)
+        return redirect('income_detail', income_id=income.id)
+
+    return render(request, 'income/income_detail.html', {
+        'income': income,
+        'allocations': json.dumps(allocations),
+        'income_allocated': income.allocated
     })

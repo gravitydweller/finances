@@ -1,8 +1,5 @@
 <!-- incomes/templates/income/income_detail.html -->
 
-<!--
-    dodat allocation amonts barchart with values for each pool
--->
 {% extends 'layouts/mybase.html' %}
 
 {% block content %}
@@ -19,11 +16,70 @@
                         <!-- Display other income details here -->
                         <a href="{% url 'income_update' income.id %}" class="btn btn-primary">Edit</a>
                         <a href="{% url 'income_delete' income.id %}" class="btn btn-danger">Delete</a>
+
+                        {% if not income_allocated %}
+                            <form method="post">
+                                {% csrf_token %}
+                                <button type="submit" name="allocate" class="btn btn-warning">Allocate</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Allocation Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="allocationChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctx = document.getElementById('allocationChart').getContext('2d');
+        var allocationData = JSON.parse('{{ allocations|escapejs }}');
+        
+        var labels = allocationData.map(function (item) {
+            return item.pool;
+        });
+        var data = allocationData.map(function (item) {
+            return item.allocated_amount;
+        });
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Allocation Amount',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
+
+
+
 
