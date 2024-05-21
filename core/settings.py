@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     "django_browser_reload",
     
     "home",
-    
     "incomes",
     "pools",
     "allocations",

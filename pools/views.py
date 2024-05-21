@@ -3,9 +3,8 @@
 from django.forms.models import model_to_dict
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Pool, BalanceHistory
-from .forms import PoolForm, PoolTransferForm, PoolUpdateForm
-
+from .models import Pool
+from .forms import PoolForm, PoolTransferForm
 
 
 
@@ -65,7 +64,7 @@ def pool_home(request):
 
 
 
-
+# NE DELA !!!!!
 def pool_detail(request, pool_id):
     pool = get_object_or_404(Pool, id=pool_id)
     if request.method == 'POST':
@@ -76,7 +75,7 @@ def pool_detail(request, pool_id):
         form = PoolForm(instance=pool)
 
     # Fetch balance history data
-    balance_history = BalanceHistory.objects.filter(pool=pool).order_by('date')
+    balance_history = Pool.objects.filter(pool=pool).order_by('date')
     dates = [entry.date.strftime('%Y-%m-%d') for entry in balance_history]
     balances = [entry.balance for entry in balance_history]
 

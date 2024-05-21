@@ -37,3 +37,14 @@ git add .
 git commit -m “home page established“
 git push
 ****************************************************
+
+
+
+
+
+
+cd home/code/finances
+source env/bin/activate
+python manage.py load_pools
+python manage.py load_expensetags
+python manage.py load_expensechategories
