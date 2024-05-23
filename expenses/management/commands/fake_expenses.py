@@ -31,7 +31,7 @@ class Command(BaseCommand):
         for i in range(100):  # Generate 100 fake expense records
             category = random.choice(categories)
             tag = random.choice(list(tag_instances.values()))
-            amount = round(random.uniform(10, 500), 2)  # Random amount between 10 and 500
+            amount = round(random.uniform(20, 500), 2)  # Random amount between 10 and 500
             year = random.randint(2022, date.today().year)
             month = random.randint(1, 12)
             day = random.randint(1, 28)  # Random day in the month

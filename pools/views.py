@@ -5,6 +5,7 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Pool
 from .forms import PoolForm, PoolTransferForm
+from history.models import BalanceHistory
 
 
 
@@ -75,7 +76,7 @@ def pool_detail(request, pool_id):
         form = PoolForm(instance=pool)
 
     # Fetch balance history data
-    balance_history = Pool.objects.filter(pool=pool).order_by('date')
+    balance_history = BalanceHistory.objects.filter(pool=pool).order_by('date')
     dates = [entry.date.strftime('%Y-%m-%d') for entry in balance_history]
     balances = [entry.balance for entry in balance_history]
 

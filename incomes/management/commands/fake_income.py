@@ -16,7 +16,7 @@ class Command(BaseCommand):
         for i in range(100):  # Generate 100 fake income records
             employer = random.choice(employers)
             tag = random.choice(tag_choices)
-            amount = round(random.uniform(1980, 2680), 2)  # Random amount between 1980 and 2680
+            amount = round(random.uniform(1980, 2480), 2)  # Random amount between 1980 and 2680
             year = random.randint(2022, date.today().year)
             month = random.randint(1, 12)
             day = 15  # Fixed day as 15th of the month
