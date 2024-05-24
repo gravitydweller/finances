@@ -15,6 +15,19 @@ class Pool(models.Model):
         return f"{self.name}"
 
 
+
+
+class BalanceHistory(models.Model):
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='balance_history')
+    date = models.DateTimeField()
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Balance for {self.pool.name} on {self.date.strftime('%Y-%m-%d %H:%M:%S')}: {self.balance}"
+
+
+
+
 class PoolTransfer(models.Model):
     date = models.DateField()
     source_pool = models.ForeignKey(Pool, related_name='transfers_from', on_delete=models.CASCADE)
@@ -26,9 +39,15 @@ class PoolTransfer(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        
         # Update source pool balance
         self.source_pool.current_balance -= self.amount
         self.source_pool.save()
+        
         # Update destination pool balance
         self.destination_pool.current_balance += self.amount
         self.destination_pool.save()
+        
+        # Create BalanceHistory entries for both source and destination pools
+        BalanceHistory.objects.create(pool=self.source_pool, balance=self.source_pool.current_balance, date=self.date)
+        BalanceHistory.objects.create(pool=self.destination_pool, balance=self.destination_pool.current_balance, date=self.date)

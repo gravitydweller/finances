@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     "expenses",
 
     "chartjs",
-    "history",
 
 ]
 

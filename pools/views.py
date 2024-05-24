@@ -3,10 +3,10 @@
 from django.forms.models import model_to_dict
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Pool
+from .models import Pool, BalanceHistory
 from .forms import PoolForm, PoolTransferForm
-from history.models import BalanceHistory
-
+from django.db.models import DecimalField
+from django.db.models.functions import Cast
 
 
 def pool_transfer_create(request):
@@ -42,7 +42,7 @@ def pool_update(request, pool_id):
 
 
 ##################################################################################################
-
+# POOL HOME VIEW
 def pool_home(request):
     # Get all pools
     pools = Pool.objects.all()
@@ -63,9 +63,8 @@ def pool_home(request):
     })
 
 
-
-
-# NE DELA !!!!!
+##################################################################################################
+# INDIVIDUAL POOL VIEW
 def pool_detail(request, pool_id):
     pool = get_object_or_404(Pool, id=pool_id)
     if request.method == 'POST':
@@ -75,10 +74,13 @@ def pool_detail(request, pool_id):
     else:
         form = PoolForm(instance=pool)
 
-    # Fetch balance history data
+    # Fetch balance history data related to the current pool
     balance_history = BalanceHistory.objects.filter(pool=pool).order_by('date')
+    # Convert Decimal objects to float
+    balance_history = balance_history.annotate(balance_float=Cast('balance', DecimalField(max_digits=10, decimal_places=2)))
     dates = [entry.date.strftime('%Y-%m-%d') for entry in balance_history]
-    balances = [entry.balance for entry in balance_history]
+    # Convert balance_float to float
+    balances = [float(entry.balance_float) for entry in balance_history]
 
     chart_data = {
         'dates': dates,

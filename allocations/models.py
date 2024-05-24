@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
 from incomes.models import Income
-from pools.models import Pool
+from pools.models import Pool, BalanceHistory
 
 class IncomeAllocation(models.Model):
     income = models.OneToOneField(Income, on_delete=models.CASCADE, primary_key=True)
@@ -38,9 +38,8 @@ def allocate_income_to_pools(income_allocation_instance):
         pool.current_balance += pool_allocation_total
         pool.save()
 
-        # Update balance history
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+        # Create balance history with the income date
+        BalanceHistory.objects.create(pool=pool, balance=pool.current_balance, date=income_instance.date)
 
 @receiver(post_save, sender=IncomeAllocation)
 def allocate_income(sender, instance, created, **kwargs):

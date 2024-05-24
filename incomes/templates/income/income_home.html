@@ -6,9 +6,6 @@
 <div class="content">
     <div class="container-fluid">
 
-        <!-- ALL INCOME BUTTON -->
-        <a href="{% url 'income_create' %}" class="btn btn-primary">Add Income</a>
-
         <!-- PLOT OF INCOMES OVER TIME -->
         <div class="row">
             <div class="col-md-12">
@@ -55,6 +52,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- ADD INCOME BUTTON -->
+        <a href="{% url 'income_create' %}" class="btn btn-primary">Add Income</a>
 
         <!-- LATEST INCOMES LIST -->
         <div class="row">
