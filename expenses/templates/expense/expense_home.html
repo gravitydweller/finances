@@ -5,10 +5,9 @@
 {% block content %}
 <div class="content">
     <div class="container-fluid">
-
-        <!-- PLOT OF EXPENSES OVER TIME -->
         <div class="row">
-            <div class="col-md-12">
+            <!-- PLOT OF EXPENSES OVER TIME -->
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Expenses Over Time</h4>
@@ -20,7 +19,7 @@
                                 var ctx = document.getElementById('expenseChart').getContext('2d');
                                 var chartData = JSON.parse('{{ chart_data|escapejs }}');
                                 var expenseChart = new Chart(ctx, {
-                                    type: 'bar',  // Change type to 'bar' for a bar chart
+                                    type: 'bar',
                                     data: {
                                         labels: chartData.dates,
                                         datasets: [{
@@ -51,11 +50,45 @@
                     </div>
                 </div>
             </div>
+
+            <!-- NEW PLOT OF EXPENSES BY CATEGORY (LAST 6 MONTHS) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Expenses by Category (Last 6 Months)</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryExpenseChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('categoryExpenseChart').getContext('2d');
+                                var chartData = JSON.parse('{{ bar_chart_data|escapejs }}');
+                                var categoryExpenseChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: chartData.categories,
+                                        datasets: [{
+                                            label: 'Total Amount',
+                                            data: chartData.amounts,
+                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- ADD EXPENSE BUTTON -->
-        <a href="{% url 'expense_create' %}" class="btn btn-primary">Add Expense</a>
-
         <!-- EXPENSES LIST -->
         <div class="row">
             <div class="col-md-12">
@@ -97,6 +130,9 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'expense_create' %}" class="btn btn-primary">Add Expense</a>
                     </div>
                 </div>
             </div>

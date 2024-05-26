@@ -4,22 +4,22 @@
 
 {% block content %}
 
-
-<!-- PLOT OF POOL BALANCES -->
 <div class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <!-- PLOT OF POOL BALANCES -->
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Pool Balances</h4>
                     </div>
                     <div class="card-body">
                         <canvas id="poolChart"></canvas>
+                        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('poolChart').getContext('2d');
-                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
+                                var chartData = JSON.parse('{{ chart_data_current_balances|escapejs }}');
                                 var poolChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
@@ -33,6 +33,19 @@
                                         }]
                                     },
                                     options: {
+                                        plugins: {
+                                            datalabels: {
+                                                anchor: 'end',
+                                                align: 'end',
+                                                color: 'black',
+                                                font: {
+                                                    weight: 'bold'
+                                                },
+                                                formatter: function(value, context) {
+                                                    return value.toFixed(2); // Format the label to 2 decimal places
+                                                }
+                                            }
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true
@@ -45,16 +58,64 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-<!-- ALL POOLS -->
-<div class="content">
-    <div class="container-fluid">
+            <!-- NEW LINE CHART FOR BALANCE HISTORIES -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Pool Balance Histories</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="balanceHistoryChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('balanceHistoryChart').getContext('2d');
+                                var chartData = JSON.parse('{{ chart_data_time_balances|escapejs }}');
+                                var datasets = [];
+
+                                for (var pool_name in chartData.balances) {
+                                    datasets.push({
+                                        label: pool_name,
+                                        data: chartData.balances[pool_name],
+                                        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
+                                        fill: false
+                                    });
+                                }
+
+                                var balanceHistoryChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: chartData.dates,
+                                        datasets: datasets
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'month'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALL POOLS -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-primary">
+                        <h4 class="card-title">All Pools</h4>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -69,7 +130,7 @@
                                 <tbody>
                                     {% for pool in pools %}
                                     <tr>
-                                        <td><a href="{% url 'pool_detail' pool.id %}">{{ pool.name }}</td>
+                                        <td><a href="{% url 'pool_detail' pool.id %}">{{ pool.name }}</a></td>
                                         <td>{{ pool.type }}</td>
                                         <td>{{ pool.current_balance|floatformat:2 }}</td>
                                         <td>{{ pool.allocated_procentage }}</td>
@@ -88,4 +149,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

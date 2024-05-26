@@ -8,19 +8,25 @@
     {
         "model": "expenses.expensechategory",
         "fields": {
+            "name": "gas expense"
+        }
+    },
+    {
+        "model": "expenses.expensechategory",
+        "fields": {
             "name": "utility expense"
         }
     },
     {
         "model": "expenses.expensechategory",
         "fields": {
-            "name": "emergency expense"
+            "name": "car expense"
         }
     },
     {
         "model": "expenses.expensechategory",
         "fields": {
-            "name": "volt expense"
+            "name": "emergency expense"
         }
     }
     

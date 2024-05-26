@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, redirect
 from .models import Income
 from .forms import IncomeForm
-from pools.models import Pool
+from pools.models import Pool, BalanceHistory
 from allocations.models import IncomeAllocation
 from allocations.forms import IncomeAllocationForm
 
@@ -13,6 +13,10 @@ import base64
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+from django.db.models import F, DecimalField
+from django.db.models.functions import Cast
+from collections import defaultdict
 
 
 def income_detail(request, income_id):
@@ -116,3 +120,6 @@ def income_detail(request, income_id):
         'allocations': json.dumps(allocations),
         'income_allocated': income.allocated
     })
+
+
+

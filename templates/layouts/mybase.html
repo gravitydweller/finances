@@ -14,6 +14,10 @@
     {% block extrastyle %}{% endblock extrastyle %}
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+
+    <script src="{% static 'pools/js/pool_home.js' %}"></script>
 </head>
 
 <body class="{% block bodyclass %}{% endblock bodyclass %}">
@@ -28,9 +32,10 @@
                 <!-- INCOME BUTTON -->
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'income_home' %}">
-                            <i class="material-icons">receipt</i>
-                            <p>Income</p>
+                        <a class="nav-link" href="{% url 'pool_home' %}">
+                            <i class="material-icons">token</i>
+                            <p>Pools</p>
+                        </a>
                         </a>
                     </li>
                     <!-- EXPENSE BUTTON -->
@@ -42,10 +47,9 @@
                     </li>
                     <!-- POOL BUTTON -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'pool_home' %}">
-                            <i class="material-icons">token</i>
-                            <p>Pools</p>
-                        </a>
+                        <a class="nav-link" href="{% url 'income_home' %}">
+                            <i class="material-icons">receipt</i>
+                            <p>Income</p>
                     </li>
                 </ul>
             </div>
