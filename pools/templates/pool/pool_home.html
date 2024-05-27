@@ -5,16 +5,162 @@
 {% block content %}
 
 <div class="content">
-    <div class="container-fluid">
+    <div class="container-fluid" >
+
+        <!-- Reserve, Cost, and Investment Charts -->
         <div class="row">
-            <!-- PLOT OF POOL BALANCES -->
-            <div class="col-md-6">
+            <!-- RESERVE POOL BALANCES -->
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Pool Balances</h4>
+                        <h4 class="card-title">Reserve Pool Balances</h4>
+                        <p class="card-category">(last {{ some_months_ago }} months)</p>
                     </div>
                     <div class="card-body">
-                        <canvas id="poolChart"></canvas>
+                        <canvas id="reservePoolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('reservePoolChart').getContext('2d');
+                                var reserveData = JSON.parse('{{ chart_data_reserve_time_balances|escapejs }}');
+                                var reservePoolChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: reserveData.dates,
+                                        datasets: Object.keys(reserveData.balances).map(function (key) {
+                                            return {
+                                                label: key,
+                                                data: reserveData.balances[key],
+                                                borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
+                                                fill: false
+                                            };
+                                        })
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'month'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COST POOL BALANCES -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Cost Pool Balances</h4>
+                        <p class="card-category">(last {{ some_months_ago }} months)</p>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="costPoolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('costPoolChart').getContext('2d');
+                                var costData = JSON.parse('{{ chart_data_cost_time_balances|escapejs }}');
+                                var costPoolChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: costData.dates,
+                                        datasets: Object.keys(costData.balances).map(function (key) {
+                                            return {
+                                                label: key,
+                                                data: costData.balances[key],
+                                                borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
+                                                fill: false
+                                            };
+                                        })
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'month'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INVESTMENT POOL BALANCES -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Investment Pool Balances</h4>
+                        <p class="card-category">(last {{ some_months_ago }} months)</p>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="investmentPoolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('investmentPoolChart').getContext('2d');
+                                var investmentData = JSON.parse('{{ chart_data_investment_time_balances|escapejs }}');
+                                var investmentPoolChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: investmentData.dates,
+                                        datasets: Object.keys(investmentData.balances).map(function (key) {
+                                            return {
+                                                label: key,
+                                                data: investmentData.balances[key],
+                                                borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
+                                                fill: false
+                                            };
+                                        })
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'month'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row" >
+            <!-- PLOT OF POOL BALANCES -->
+            <div class="col-md-6" >
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Current Balances</h4>
+                    </div>
+                    <div class="card-bod" >
+                        <canvas id="poolChart"  ></canvas>
                         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
@@ -39,7 +185,7 @@
                                                 align: 'end',
                                                 color: 'black',
                                                 font: {
-                                                    weight: 'bold'
+                                                    weight: 'bold' // You can adjust other font properties here as well
                                                 },
                                                 formatter: function(value, context) {
                                                     return value.toFixed(2); // Format the label to 2 decimal places
@@ -50,55 +196,24 @@
                                             y: {
                                                 beginAtZero: true
                                             }
-                                        }
-                                    }
-                                });
-                            });
-                        </script>
-                    </div>
-                </div>
-            </div>
+                                        },
+                                        // Add annotations
+                                        animation: {
+                                            onComplete: function () {
+                                                var chart = this.chart;
+                                                var ctx = chart.ctx;
+                                                ctx.font = 'bold 14px Arial'; // Set font family and size here
+                                                ctx.fillStyle = "#636364";
+                                                ctx.textAlign = 'center';
+                                                ctx.textBaseline = 'bottom';
 
-            <!-- NEW LINE CHART FOR BALANCE HISTORIES -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h4 class="card-title">Pool Balance Histories</h4>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="balanceHistoryChart"></canvas>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                var ctx = document.getElementById('balanceHistoryChart').getContext('2d');
-                                var chartData = JSON.parse('{{ chart_data_time_balances|escapejs }}');
-                                var datasets = [];
-
-                                for (var pool_name in chartData.balances) {
-                                    datasets.push({
-                                        label: pool_name,
-                                        data: chartData.balances[pool_name],
-                                        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-                                        fill: false
-                                    });
-                                }
-
-                                var balanceHistoryChart = new Chart(ctx, {
-                                    type: 'line',
-                                    data: {
-                                        labels: chartData.dates,
-                                        datasets: datasets
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        scales: {
-                                            x: {
-                                                type: 'time',
-                                                time: {
-                                                    unit: 'month'
-                                                }
-                                            },
-                                            y: {
-                                                beginAtZero: true
+                                                this.data.datasets.forEach(function (dataset) {
+                                                    for (var i = 0; i < dataset.data.length; i++) {
+                                                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                                                        var yPos = model.y - 5; // Adjust position here
+                                                        ctx.fillText(dataset.data[i].toFixed(2), model.x, yPos); // Format to 2 decimal places
+                                                    }
+                                                });
                                             }
                                         }
                                     }
@@ -108,11 +223,8 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ALL POOLS -->
-        <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">All Pools</h4>
@@ -132,7 +244,7 @@
                                     <tr>
                                         <td><a href="{% url 'pool_detail' pool.id %}">{{ pool.name }}</a></td>
                                         <td>{{ pool.type }}</td>
-                                        <td>{{ pool.current_balance|floatformat:2 }}</td>
+                                        <td>{{ pool.current_balance|floatformat:2 }} </td>
                                         <td>{{ pool.allocated_procentage }}</td>
                                         <td>{{ pool.allocated_fixed }}</td>
                                     </tr>

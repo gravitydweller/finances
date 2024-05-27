@@ -3,8 +3,10 @@
 {% extends 'layouts/mybase.html' %}
 
 {% block content %}
+
 <div class="content">
     <div class="container-fluid">
+        <!-- Expense Details -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
@@ -12,18 +14,60 @@
                         <h4 class="card-title">Expense Detail</h4>
                     </div>
                     <div class="card-body">
-                        <p>Expense on {{ expense.date }}: {{ expense.amount }} €</p>
                         <p><strong>Tag:</strong> {{ expense.tag }}</p>
                         <p><strong>Category:</strong> {{ expense.chategory }}</p>
+                        <p><strong>Amount:</strong> {{ expense.amount|floatformat:2 }}</p>
+                        <p><strong>Date:</strong> {{ expense.date }}</p>
                         <p><strong>Description:</strong> {{ expense.description }}</p>
-                        <p><strong>Attachment:</strong>
-                            {% if expense.attachment %}
-                                <a href="{{ expense.attachment.url }}">Download</a>
-                            {% else %}
-                                No file
-                            {% endif %}
-                        </p>
-                        <a href="{% url 'expense_update' expense.id %}" class="btn btn-primary">Edit</a>
+
+                        <!-- PLOT OF EXPENSES OVER TIME -->
+                        <canvas id="expenseChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('expenseChart').getContext('2d');
+                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
+                                var expenseChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: chartData.dates,
+                                        datasets: [{
+                                            label: 'Expense',
+                                            data: chartData.amounts,
+                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'day'
+                                                },
+                                                distribution: 'linear'
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+
+                        <!-- DISPLAY ATTACHMENT IF IT EXISTS -->
+                        {% if expense.attachment %}
+                        <div class="attachment">
+                            <h5>Attachment</h5>
+                            <a href="{{ expense.attachment.url }}" target="_blank">View Attachment</a>
+                        </div>
+                        {% else %}
+                        <p>No attachment available.</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'expense_update' expense.id %}" class="btn btn-primary">Edit</a>  <!-- Updated URL name -->
                         <form method="post" action="{% url 'expense_delete' expense.id %}" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Delete</button>
@@ -34,4 +78,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

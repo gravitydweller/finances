@@ -62,7 +62,7 @@
                         <p class="card-category">Here is a list of all incomes:</p>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="max-height: 230px; overflow-y: auto;">
                             <table class="table">
                                 <thead class=" text-primary">
                                     <th>Employer</th>
@@ -70,7 +70,6 @@
                                     <th>Amount</th>
                                     <th>Date</th>
                                     <th>Allocated</th>
-                                    <th>Attachment</th>
                                     <th></th>
                                 </thead>
                                 <tbody>
@@ -81,13 +80,6 @@
                                         <td>{{ income.amount|floatformat:2 }}</td>                          
                                         <td>{{ income.date }}</td>
                                         <td>{{ income.allocated }}</td>
-                                        <td>
-                                            {% if income.attachment %}
-                                                <a href="{{ income.attachment.url }}">file</a>
-                                            {% else %}
-                                                No file
-                                            {% endif %}
-                                        </td>
                                         <td><a href="{% url 'income_detail' income.id %}">view details</a></td>
                                     </tr>
                                     {% endfor %}

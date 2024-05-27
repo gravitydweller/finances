@@ -17,7 +17,7 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('expenseChart').getContext('2d');
-                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
+                                var chartData = JSON.parse('{{ all_chart_data|escapejs }}');
                                 var expenseChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
@@ -51,18 +51,18 @@
                 </div>
             </div>
 
-            <!-- NEW PLOT OF EXPENSES BY CATEGORY (LAST 6 MONTHS) -->
+            <!-- NEW PLOT OF EXPENSES BY CATEGORY -->
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Expenses by Category (Last 6 Months)</h4>
+                        <h4 class="card-title">Expenses by Category (Last {{some_months_ago}} Months)</h4>
                     </div>
                     <div class="card-body">
                         <canvas id="categoryExpenseChart"></canvas>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('categoryExpenseChart').getContext('2d');
-                                var chartData = JSON.parse('{{ bar_chart_data|escapejs }}');
+                                var chartData = JSON.parse('{{ categories_chart_data|escapejs }}');
                                 var categoryExpenseChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
@@ -89,16 +89,17 @@
                 </div>
             </div>
         </div>
+        
         <!-- EXPENSES LIST -->
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Expense List</h4>
                         <p class="card-category">Here is a list of all expenses:</p>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="max-height: 540px; overflow-y: auto;">
                             <table class="table">
                                 <thead class="text-primary">
                                     <th>Tag</th>
@@ -106,7 +107,6 @@
                                     <th>Amount</th>
                                     <th>Date</th>
                                     <th>Description</th>
-                                    <th>Attachment</th>
                                     <th></th>
                                 </thead>
                                 <tbody>
@@ -117,13 +117,6 @@
                                         <td>{{ expense.amount|floatformat:2 }}</td>
                                         <td>{{ expense.date }}</td>
                                         <td>{{ expense.description }}</td>
-                                        <td>
-                                            {% if expense.attachment %}
-                                                <a href="{{ expense.attachment.url }}">file</a>
-                                            {% else %}
-                                                No file
-                                            {% endif %}
-                                        </td>
                                         <td><a href="{% url 'expense_detail' expense.id %}">view details</a></td>
                                     </tr>
                                     {% endfor %}
@@ -133,6 +126,44 @@
                     </div>
                     <div class="card-footer">
                         <a href="{% url 'expense_create' %}" class="btn btn-primary">Add Expense</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW PLOT OF EXPENSES BY TAG -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Expenses by Category (Last {{some_months_ago}} Months)</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryExpenseChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('categoryExpenseChart').getContext('2d');
+                                var chartData = JSON.parse('{{ tag_chart_data|escapejs }}');
+                                var categoryExpenseChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: chartData.categories,
+                                        datasets: [{
+                                            label: 'Total Amount',
+                                            data: chartData.amounts,
+                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
