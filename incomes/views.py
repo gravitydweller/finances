@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from django.db.models import F, DecimalField
 from django.db.models.functions import Cast
 from collections import defaultdict
-
+from core.utilities import *
 
 def income_detail(request, income_id):
     income = Income.objects.get(id=income_id)
@@ -49,7 +49,7 @@ def income_delete(request, income_id):
     if request.method == 'POST':
         income.delete()
         return redirect('income_list')
-    return render(request, 'income/income_confirm_delete.html', {'income': income})
+    return render(request, 'income/income_home.html', {'income': income})
 
 
 ##################################################################################################

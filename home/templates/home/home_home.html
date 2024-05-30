@@ -13,7 +13,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">{{ pool.name }}</h4>
+                        <h4 class="card-title" style="font-weight: bold; font-size: 1.5em;color: #484860;">{{ pool.name }}</h4>
                     </div>
                     <div class="card-body">
                         <p>Current Balance: {{ pool.current_balance|floatformat:2 }}</p>
@@ -32,6 +32,7 @@
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Monthly Expenses and Incomes</h4>
+                        <p class="card-category">(last {{ HOME_MONTHLY_EXPENSES_DURATION }} months)</p>
                     </div>
                     <div class="card-body">
                         <canvas id="financeChart"></canvas>
@@ -86,156 +87,62 @@
                 </div>
             </div>
 
-             <!-- INVESTMENT POOL BALANCES -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header card-header-primary">
-                    <h4 class="card-title">Investment Pool Balances</h4>
-                    <p class="card-category">(last {{ some_months_ago }} months)</p>
-                </div>
-                <div class="card-body">
-                    <canvas id="investmentPoolChart"></canvas>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            var ctx = document.getElementById('investmentPoolChart').getContext('2d');
-                            var investmentData = JSON.parse('{{ chart_data_investment_time_balances|escapejs }}');
-                            var investmentPoolChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: investmentData.dates,
-                                    datasets: Object.keys(investmentData.balances).map(function (key) {
-                                        return {
-                                            label: key,
-                                            data: investmentData.balances[key],
-                                            borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-                                            fill: false
-                                        };
-                                    })
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        x: {
-                                            type: 'time',
-                                            time: {
-                                                unit: 'month'
+            <!-- POOL BALANCES -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Pools History</h4>
+                        <p class="card-category">(last {{ HOME_POOL_HISTORY_DURATION }} months)</p>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="historyPoolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('historyPoolChart').getContext('2d');
+                                var chartData = JSON.parse('{{ chart_data_time_balances|escapejs }}');
+
+                                //var pools = JSON.parse('{{ pools|escapejs }}'); // Parse pools object
+                                //var poolColors = pools.map(pool => pool.color); // Extract colors from pools object
+
+                                var datasets = Object.keys(chartData.balances).map(function (key) {
+                                    return {
+                                        label: key,
+                                        data: chartData.balances[key],
+                                        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16), //poolColors[index], //
+                                        fill: false,
+                                        borderWidth: 1
+                                    };
+                                });
+
+                                var historyPoolChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: chartData.dates,
+                                        datasets: datasets
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'month'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true
                                             }
-                                        },
-                                        y: {
-                                            beginAtZero: true
                                         }
                                     }
-                                }
+                                });
                             });
-                        });
-                    </script>
+                        </script>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
-
-
-
-
-<!-- Reserve, Cost, and Investment Charts -->
-<div class="row">
-    <!-- RESERVE POOL BALANCES -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header card-header-primary">
-                <h4 class="card-title">Reserve Pool Balances</h4>
-                <p class="card-category">(last {{ some_months_ago }} months)</p>
-            </div>
-            <div class="card-body">
-                <canvas id="reservePoolChart"></canvas>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        var ctx = document.getElementById('reservePoolChart').getContext('2d');
-                        var reserveData = JSON.parse('{{ chart_data_reserve_time_balances|escapejs }}');
-                        var reservePoolChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: reserveData.dates,
-                                datasets: Object.keys(reserveData.balances).map(function (key) {
-                                    return {
-                                        label: key,
-                                        data: reserveData.balances[key],
-                                        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-                                        fill: false
-                                    };
-                                })
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    x: {
-                                        type: 'time',
-                                        time: {
-                                            unit: 'month'
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    });
-                </script>
-            </div>
-        </div>
-    </div>
-
-    <!-- COST POOL BALANCES -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header card-header-primary">
-                <h4 class="card-title">Cost Pool Balances</h4>
-                <p class="card-category">(last {{ some_months_ago }} months)</p>
-            </div>
-            <div class="card-body">
-                <canvas id="costPoolChart"></canvas>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        var ctx = document.getElementById('costPoolChart').getContext('2d');
-                        var costData = JSON.parse('{{ chart_data_cost_time_balances|escapejs }}');
-                        var costPoolChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: costData.dates,
-                                datasets: Object.keys(costData.balances).map(function (key) {
-                                    return {
-                                        label: key,
-                                        data: costData.balances[key],
-                                        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-                                        fill: false
-                                    };
-                                })
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    x: {
-                                        type: 'time',
-                                        time: {
-                                            unit: 'month'
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    });
-                </script>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
 
 {% endblock %}

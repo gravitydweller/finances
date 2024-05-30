@@ -10,7 +10,8 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Expenses Over Time</h4>
+                        <h4 class="card-title">Expenses</h4>
+                        <p class="card-category">(last {{ some_months_ago }} months)</p>
                     </div>
                     <div class="card-body">
                         <canvas id="expenseChart"></canvas>
@@ -55,7 +56,8 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Expenses by Category (Last {{some_months_ago}} Months)</h4>
+                        <h4 class="card-title">Expenses by Category </h4>
+                        <p class="card-category">(last {{ some_months_ago }} months)</p>
                     </div>
                     <div class="card-body">
                         <canvas id="categoryExpenseChart"></canvas>
@@ -70,8 +72,8 @@
                                         datasets: [{
                                             label: 'Total Amount',
                                             data: chartData.amounts,
-                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            backgroundColor: 'rgba(31, 243, 182, 0.2)',
+                                            borderColor: 'rgba(31, 243, 182, 1)',
                                             borderWidth: 1
                                         }]
                                     },
@@ -80,8 +82,28 @@
                                             y: {
                                                 beginAtZero: true
                                             }
+                                        },
+                                        // Add annotations
+                                        animation: {
+                                            onComplete: function () {
+                                                var chart = this.chart;
+                                                var ctx = chart.ctx;
+                                                ctx.font = 'bold 14px Arial'; // Set font family and size here
+                                                ctx.fillStyle = "#636364";
+                                                ctx.textAlign = 'center';
+                                                ctx.textBaseline = 'bottom';
+
+                                                this.data.datasets.forEach(function (dataset) {
+                                                    for (var i = 0; i < dataset.data.length; i++) {
+                                                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                                                        var yPos = model.y - 5; // Adjust position here
+                                                        ctx.fillText(dataset.data[i].toFixed(2), model.x, yPos); // Format to 2 decimal places
+                                                    }
+                                                });
+                                            }
                                         }
-                                    }
+                                    },
+                                    
                                 });
                             });
                         </script>
@@ -92,8 +114,8 @@
         
         <!-- EXPENSES LIST -->
         <div class="row">
-            <div class="col-md-6">
-                <div class="card">
+            <div class="col-md-6 d-flex">
+                <div class="card flex-grow-2">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Expense List</h4>
                         <p class="card-category">Here is a list of all expenses:</p>
@@ -130,34 +152,64 @@
                 </div>
             </div>
 
-            <!-- NEW PLOT OF EXPENSES BY TAG -->
+            <!-- Tag Expenses Chart -->
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Expenses by Category (Last {{some_months_ago}} Months)</h4>
+                        <h4 class="card-title">Expenses by Tag </h4>
+                        <p class="card-category">(last {{ some_months_ago }} months)</p>
                     </div>
                     <div class="card-body">
-                        <canvas id="categoryExpenseChart"></canvas>
+                        <canvas id="tagChart"></canvas>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
-                                var ctx = document.getElementById('categoryExpenseChart').getContext('2d');
-                                var chartData = JSON.parse('{{ tag_chart_data|escapejs }}');
-                                var categoryExpenseChart = new Chart(ctx, {
-                                    type: 'bar',
+                                var ctx = document.getElementById('tagChart').getContext('2d');
+                                var tagData = JSON.parse('{{ tag_chart_data|escapejs }}');
+                                var tagChart = new Chart(ctx, {
+                                    type: 'bar',  // You can change the chart type if needed
                                     data: {
-                                        labels: chartData.categories,
+                                        labels: tagData.tags,  // X-axis labels
                                         datasets: [{
                                             label: 'Total Amount',
-                                            data: chartData.amounts,
-                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            data: tagData.amounts,  // Y-axis data
+                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                            borderColor: 'rgba(54, 162, 235, 1)',
                                             borderWidth: 1
                                         }]
                                     },
                                     options: {
                                         scales: {
+                                            x: {
+                                                title: {
+                                                    display: true,
+                                                    text: 'Tags'
+                                                }
+                                            },
                                             y: {
+                                                title: {
+                                                    display: true,
+                                                    text: 'Amount'
+                                                },
                                                 beginAtZero: true
+                                            }
+                                        },
+                                        // Add annotations
+                                        animation: {
+                                            onComplete: function () {
+                                                var chart = this.chart;
+                                                var ctx = chart.ctx;
+                                                ctx.font = 'bold 14px Arial'; // Set font family and size here
+                                                ctx.fillStyle = "#636364";
+                                                ctx.textAlign = 'center';
+                                                ctx.textBaseline = 'bottom';
+
+                                                this.data.datasets.forEach(function (dataset) {
+                                                    for (var i = 0; i < dataset.data.length; i++) {
+                                                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                                                        var yPos = model.y - 5; // Adjust position here
+                                                        ctx.fillText(dataset.data[i].toFixed(2), model.x, yPos); // Format to 2 decimal places
+                                                    }
+                                                });
                                             }
                                         }
                                     }

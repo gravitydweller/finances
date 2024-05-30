@@ -11,11 +11,61 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-MONTHS_AGO = 3
+from core.utilities import *
+
+
+def handle_expense_form_submission(request):
+    form = ExpenseForm(request.POST, request.FILES)
+    if form.is_valid():
+        form.save()
+        return True
+    return False
+
+def get_expenses_list():
+    return Expense.objects.all().order_by('-date')
+
+def get_expenses_over_time_chart_data(duration):
+    some_months_ago = timezone.now() - timedelta(days=duration * 30)
+    expenses = Expense.objects.filter(date__gte=some_months_ago).order_by('date')
+    dates = [expense.date.strftime('%Y-%m-%d') for expense in expenses]
+    amounts = [expense.amount for expense in expenses]
+    return {'dates': dates, 'amounts': amounts}
+
+def get_expenses_by_category_chart_data():
+    some_months_ago = timezone.now() - timedelta(days=EXPENSE_HOME_DURATION * 30)
+    expenses_last_some_months = Expense.objects.filter(date__gte=some_months_ago)
+
+    category_totals = {}
+    for expense in expenses_last_some_months:
+        category_name = expense.chategory.name
+        if category_name in category_totals:
+            category_totals[category_name] += expense.amount
+        else:
+            category_totals[category_name] = expense.amount
+
+    return {'categories': list(category_totals.keys()), 'amounts': list(category_totals.values())}
+
+def get_expenses_by_tag_chart_data():
+    tags = ExpenseTag.objects.all()
+    tag_names = []
+    tag_amounts = []
+
+    for tag in tags:
+        expenses_for_tag = Expense.objects.filter(tag=tag)
+        total_amount_for_tag = sum(expense.amount for expense in expenses_for_tag)
+        if total_amount_for_tag > 0:
+            tag_names.append(tag.name)
+            tag_amounts.append(total_amount_for_tag)
+
+    if tag_names:
+        return {'tags': tag_names, 'amounts': tag_amounts}
+    return None
+
+
 
 ##################################################################################################
 # EXPENSE_HOMEL VIEW
-
+'''
 def expense_home(request):
     # CREATE NEW EXPENSE
     if request.method == 'POST':
@@ -41,7 +91,7 @@ def expense_home(request):
     }
 
     # DATA FOR CHART - Expenses by category in the last X months
-    some_months_ago = datetime.now() - timedelta(days=MONTHS_AGO*30)
+    some_months_ago = datetime.now() - timedelta(days=EXPENSE_HOME_DURATION*30)
     expenses_last_some_months = Expense.objects.filter(date__gte=some_months_ago)
     
     category_totals = {}
@@ -59,21 +109,69 @@ def expense_home(request):
     }
 
     # DATA FOR CHART - Expenses by category in the last X months
-    tags = ExpenseTag.objects.all()
+    tags = ExpenseTag.objects.all()  # Get all ExpenseTag objects
 
-   
+    tag_names = []
+    tag_amounts = []
 
-    
+    # Loop through each ExpenseTag object
+    for tag in tags:
+        # Filter expenses related to the current tag
+        expenses_for_tag = Expense.objects.filter(tag=tag)
+
+        # Calculate total amount for this tag
+        total_amount_for_tag = sum(expense.amount for expense in expenses_for_tag)
+
+        # Check if total amount for tag is greater than 0
+        if total_amount_for_tag > 0:
+            # Append tag name and total amount to lists
+            tag_names.append(tag.name)
+            tag_amounts.append(total_amount_for_tag)
+
+    # Create dictionary for chart data only if there are tags with non-zero sums
+    if tag_names:
+        tag_chart_data = {
+            'tags': tag_names,
+            'amounts': tag_amounts,
+        }
+    else:
+        tag_chart_data = None  # Set to None if there are no tags with non-zero sums
+
+
     return render(request, 'expense/expense_home.html', {
         'expenses': expenses_list,
         'form': form,
         'all_chart_data': json.dumps(all_chart_data),
         'categories_chart_data': json.dumps(categories_chart_data),
-        #'tag_chart_data': json.dumps(tag_chart_data),
-        'some_months_ago': MONTHS_AGO,
+        'tag_chart_data': json.dumps(tag_chart_data),
+        'some_months_ago': EXPENSE_HOME_DURATION,
     })
 
 
+'''
+
+
+def expense_home(request):
+    if request.method == 'POST':
+        if handle_expense_form_submission(request):
+            return redirect('expense_home')
+
+    form = ExpenseForm()
+    expenses_list = get_expenses_list()
+    all_chart_data = get_expenses_over_time_chart_data(EXPENSE_HOME_DURATION)
+    categories_chart_data = get_expenses_by_category_chart_data()
+    tag_chart_data = get_expenses_by_tag_chart_data()
+
+    context = {
+        'expenses': expenses_list,
+        'form': form,
+        'all_chart_data': json.dumps(all_chart_data),
+        'categories_chart_data': json.dumps(categories_chart_data),
+        'tag_chart_data': json.dumps(tag_chart_data),
+        'some_months_ago': EXPENSE_HOME_DURATION,
+    }
+
+    return render(request, 'expense/expense_home.html', context)
 
 
 
@@ -85,11 +183,13 @@ def expense_home(request):
 
 
 ##################################################################################################
-# EXPENSE_DETAIL VIEW
+# EXPENSE DETAIL VIEW
 def expense_detail(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
     return render(request, 'expense/expense_detail.html', {'expense': expense})
 
+##################################################################################################
+# EXPENSE CREATE VIEW
 def expense_create(request):
     if request.method == 'POST':
         form = ExpenseForm(request.POST, request.FILES)
@@ -100,6 +200,8 @@ def expense_create(request):
         form = ExpenseForm()
     return render(request, 'expense/expense_form.html', {'form': form})
 
+##################################################################################################
+# EXPENSE UPDATE VIEW
 def expense_update(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
     if request.method == 'POST':
@@ -111,6 +213,8 @@ def expense_update(request, expense_id):
         form = ExpenseForm(instance=expense)
     return render(request, 'expense/expense_form.html', {'form': form})
 
+##################################################################################################
+# EXPENSE DELETE VIEW
 def expense_delete(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
     if request.method == 'POST':

@@ -30,7 +30,7 @@
     {
         "model": "expenses.expensetag",
         "fields": {
-            "name": "e-bay",
+            "name": "online expense",
             "source_pool": "soft expenses"
         }
     },
@@ -44,7 +44,7 @@
     {
         "model": "expenses.expensetag",
         "fields": {
-            "name": "volt/glovo",
+            "name": "wolt/glovo",
             "source_pool": "basic expenses"
         }
     },

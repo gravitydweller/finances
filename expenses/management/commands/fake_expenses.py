@@ -31,10 +31,10 @@ class Command(BaseCommand):
         for i in range(100):  # Generate 100 fake expense records
             category = random.choice(categories)
             tag = random.choice(list(tag_instances.values()))
-            amount = round(random.uniform(70, 75), 2)  
+            amount = round(random.uniform(150, 200), 2)  
             year = random.randint(2022, date.today().year)
             month = random.randint(1, 12)
-            day = random.randint(1, 28)  # Random day in the month
+            day = random.randint(1, 28) 
             date_generated = date(year, month, day)
             description = f'Fake expense for {tag.name}'
 

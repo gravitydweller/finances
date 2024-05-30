@@ -14,10 +14,22 @@ from django.utils.timezone import now
 from datetime import datetime, timedelta
 from django.utils import timezone
 
+from django.db.models import Sum, ExpressionWrapper, F, DecimalField
+
+from core.utilities import *
+
+import logging
+
+from django.db.models import ExpressionWrapper, F, DecimalField
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+from datetime import timedelta
+from pools.models import Pool, BalanceHistory
+from incomes.models import Income
+from expenses.models import Expense
+import json
 
 
-MONTHS_AGO = 9
-# Create your views here.
 
 def index(request):
 
@@ -26,13 +38,61 @@ def index(request):
 
 
 
-def home_home(request):
+logger = logging.getLogger(__name__)
 
-    # Aggregate incomes by month
-    incomes_by_month = Income.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=Sum('amount')).order_by('month')[:12]
+def create_balance_history_all_pools_data(pools, months_ago):
+    balance_histories = {pool.name: [] for pool in pools}
+    dates_set = set()
+    some_months_ago = timezone.now() - timedelta(days=30 * months_ago)
+    
+    logger.debug(f"Calculating balance history from {some_months_ago} to {timezone.now()} for {months_ago} months ago")
 
-    # Aggregate expenses by month
-    expenses_by_month = Expense.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=Sum('amount')).order_by('month')[:12]
+    for pool in pools:
+        balance_history = BalanceHistory.objects.filter(pool=pool, date__gte=some_months_ago, date__lte=timezone.now()).order_by('date')
+        balance_history = balance_history.annotate(balance_float=ExpressionWrapper(F('balance'), output_field=DecimalField(max_digits=10, decimal_places=2)))
+        
+        for entry in balance_history:
+            dates_set.add(entry.date)
+            balance_histories[pool.name].append((entry.date.strftime('%Y-%m-%d'), float(entry.balance_float)))
+
+    sorted_dates = sorted(dates_set)
+    
+    chart_data_time_balances = {
+        'dates': [date.strftime('%Y-%m-%d') for date in sorted_dates],
+        'balances': {}
+    }
+    
+    for pool_name in balance_histories:
+        pool_balances = []
+        balance_history_dict = {date: balance for date, balance in balance_histories[pool_name]}
+        last_balance = 0.0
+        for date in sorted_dates:
+            date_str = date.strftime('%Y-%m-%d')
+            if date_str in balance_history_dict:
+                last_balance = balance_history_dict[date_str]
+            pool_balances.append(last_balance)
+        chart_data_time_balances['balances'][pool_name] = pool_balances
+    
+    return chart_data_time_balances
+
+def create_incomes_and_expenses_history_data(months_ago):
+    some_months_ago = timezone.now() - timedelta(days=30 * months_ago)
+    
+    logger.debug(f"Calculating incomes and expenses from {some_months_ago} to {timezone.now()} for {months_ago} months ago")
+
+    # Aggregate incomes by month for the specified time period, sorted by month
+    incomes_by_month = Income.objects.filter(date__gte=some_months_ago) \
+        .annotate(month=TruncMonth('date')) \
+        .values('month') \
+        .annotate(total_amount=Sum('amount')) \
+        .order_by('month')
+
+    # Aggregate expenses by month for the specified time period, sorted by month
+    expenses_by_month = Expense.objects.filter(date__gte=some_months_ago) \
+        .annotate(month=TruncMonth('date')) \
+        .values('month') \
+        .annotate(total_amount=Sum('amount')) \
+        .order_by('month')
 
     # Prepare data for the chart
     expense_months = [entry['month'].strftime('%Y-%m') for entry in expenses_by_month]
@@ -56,14 +116,6 @@ def home_home(request):
         index = all_months.index(entry['month'].strftime('%Y-%m'))
         total_incomes[index] = entry['total_amount']
 
-
-
-    pools = Pool.objects.all()
-
-    
-
-
-
     # Convert data to JSON format for use in JavaScript
     chart_data = {
         'months': all_months,
@@ -71,118 +123,25 @@ def home_home(request):
         'total_incomes': total_incomes,
     }
 
+    return chart_data
 
 
-    # RESERVE POOL BALANCES HISTORIES ################################################################
-    reserve_pools = pools.filter(type='reserve')
-    reserve_pool_names = [reserve_pool.name for reserve_pool in reserve_pools]
 
-    reserve_balance_histories = {pool.name: [] for pool in reserve_pools}
-    reserve_dates_set = set()
+def home_home(request):
+    pools = list(Pool.objects.all())  # Ensure we are dealing with a list of pool instances
+    print(pools)
 
-    # Fetch balance history data for reserve pools
-    for pool in reserve_pools:
-        some_months_ago = timezone.now() - timedelta(days=30 * MONTHS_AGO)
-        balance_history = BalanceHistory.objects.filter(pool=pool, date__gte=some_months_ago, date__lte=timezone.now()).order_by('date')
-        balance_history = balance_history.annotate(balance_float=Cast('balance', DecimalField(max_digits=10, decimal_places=2)))
-        for entry in balance_history:
-            reserve_dates_set.add(entry.date)
-            reserve_balance_histories[pool.name].append((entry.date.strftime('%Y-%m-%d'), float(entry.balance_float)))
+    # Create incomes and expenses history data
+    chart_data = create_incomes_and_expenses_history_data(HOME_MONTHLY_EXPENSES_DURATION)
 
-    reserve_sorted_dates = sorted(reserve_dates_set)  
-
-    chart_data_reserve_time_balances = {
-        'dates': [date.strftime('%Y-%m-%d') for date in reserve_sorted_dates],
-        'balances': {}
-    }
-
-    for pool_name in reserve_pool_names:
-        pool_balances = []
-        balance_history_dict = {date: balance for date, balance in reserve_balance_histories[pool_name]}
-        last_balance = 0.0
-        for date in reserve_sorted_dates:
-            date_str = date.strftime('%Y-%m-%d')
-            if date_str in balance_history_dict:
-                last_balance = balance_history_dict[date_str]
-            pool_balances.append(last_balance)
-        chart_data_reserve_time_balances['balances'][pool_name] = pool_balances
+    # Create balance history data for all pools
+    chart_data_time_balances = create_balance_history_all_pools_data(pools, HOME_POOL_HISTORY_DURATION)
 
 
-    # COST POOL BALANCES HISTORIES ################################################################
-    cost_pools = pools.filter(type='cost')
-    cost_pool_names = [cost_pool.name for cost_pool in cost_pools]
-
-    cost_balance_histories = {pool.name: [] for pool in cost_pools}
-    cost_dates_set = set()
-
-    # Fetch balance history data for cost pools
-    for pool in cost_pools:
-        some_months_ago = timezone.now() - timedelta(days=30 * MONTHS_AGO)
-        balance_history = BalanceHistory.objects.filter(pool=pool, date__gte=some_months_ago, date__lte=timezone.now()).order_by('date')
-        balance_history = balance_history.annotate(balance_float=Cast('balance', DecimalField(max_digits=10, decimal_places=2)))
-        for entry in balance_history:
-            cost_dates_set.add(entry.date)
-            cost_balance_histories[pool.name].append((entry.date.strftime('%Y-%m-%d'), float(entry.balance_float)))
-
-    cost_sorted_dates = sorted(cost_dates_set)  
-
-    chart_data_cost_time_balances = {
-        'dates': [date.strftime('%Y-%m-%d') for date in cost_sorted_dates],
-        'balances': {}
-    }
-
-    for pool_name in cost_pool_names:
-        pool_balances = []
-        balance_history_dict = {date: balance for date, balance in cost_balance_histories[pool_name]}
-        last_balance = 0.0
-        for date in cost_sorted_dates:
-            date_str = date.strftime('%Y-%m-%d')
-            if date_str in balance_history_dict:
-                last_balance = balance_history_dict[date_str]
-            pool_balances.append(last_balance)
-        chart_data_cost_time_balances['balances'][pool_name] = pool_balances
-
-
-    # INVESTMENT POOL BALANCES HISTORIES ################################################################
-    investment_pools = pools.filter(type='investment')
-    investment_pool_names = [investment_pool.name for investment_pool in investment_pools]
-
-    investment_balance_histories = {pool.name: [] for pool in investment_pools}
-    investment_dates_set = set()
-
-    # Fetch balance history data for investment pools
-    for pool in investment_pools:
-        some_months_ago = timezone.now() - timedelta(days=30 * MONTHS_AGO)
-        balance_history = BalanceHistory.objects.filter(pool=pool, date__gte=some_months_ago, date__lte=timezone.now()).order_by('date')
-        balance_history = balance_history.annotate(balance_float=Cast('balance', DecimalField(max_digits=10, decimal_places=2)))
-        for entry in balance_history:
-            investment_dates_set.add(entry.date)
-            investment_balance_histories[pool.name].append((entry.date.strftime('%Y-%m-%d'), float(entry.balance_float)))
-
-    investment_sorted_dates = sorted(investment_dates_set)  
-
-    chart_data_investment_time_balances = {
-        'dates': [date.strftime('%Y-%m-%d') for date in investment_sorted_dates],
-        'balances': {}
-    }
-
-    for pool_name in investment_pool_names:
-        pool_balances = []
-        balance_history_dict = {date: balance for date, balance in investment_balance_histories[pool_name]}
-        last_balance = 0.0
-        for date in investment_sorted_dates:
-            date_str = date.strftime('%Y-%m-%d')
-            if date_str in balance_history_dict:
-                last_balance = balance_history_dict[date_str]
-            pool_balances.append(last_balance)
-        chart_data_investment_time_balances['balances'][pool_name] = pool_balances
-
-    # RENDER DATA
     return render(request, 'home/home_home.html', {
         'chart_data': json.dumps(chart_data),
-        'chart_data_reserve_time_balances': json.dumps(chart_data_reserve_time_balances),
-        'chart_data_cost_time_balances': json.dumps(chart_data_cost_time_balances),
-        'chart_data_investment_time_balances': json.dumps(chart_data_investment_time_balances),
+        'chart_data_time_balances': json.dumps(chart_data_time_balances),
         'pools': pools,
-        'some_months_ago': MONTHS_AGO,
+        'HOME_MONTHLY_EXPENSES_DURATION': HOME_MONTHLY_EXPENSES_DURATION,
+        'HOME_POOL_HISTORY_DURATION': HOME_POOL_HISTORY_DURATION,
     })

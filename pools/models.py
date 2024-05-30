@@ -10,6 +10,7 @@ class Pool(models.Model):
     current_balance = models.FloatField()
     allocated_procentage = models.FloatField()
     allocated_fixed = models.FloatField()
+    color = models.CharField(max_length=50, default='rgba(0, 0, 0, 1)')
 
     def __str__(self):
         return f"{self.name}"
