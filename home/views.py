@@ -26,7 +26,7 @@ from django.utils import timezone
 from datetime import timedelta
 from pools.models import Pool, BalanceHistory
 from incomes.models import Income
-from expenses.models import Expense
+from expenses.models import Expense, ExpenseTag
 import json
 
 
@@ -129,7 +129,12 @@ def create_incomes_and_expenses_history_data(months_ago):
 
 def home_home(request):
     pools = list(Pool.objects.all())  # Ensure we are dealing with a list of pool instances
-    print(pools)
+
+    # Retrieve ExpenseTags for each pool
+    pool_expense_tags = []
+    for pool in pools:
+        expense_tags = ExpenseTag.objects.filter(source_pool=pool)
+        pool_expense_tags.append((pool, list(expense_tags.values_list('name', flat=True))))  # Append a tuple (pool, expense_tags)
 
     # Create incomes and expenses history data
     chart_data = create_incomes_and_expenses_history_data(HOME_MONTHLY_EXPENSES_DURATION)
@@ -142,6 +147,7 @@ def home_home(request):
         'chart_data': json.dumps(chart_data),
         'chart_data_time_balances': json.dumps(chart_data_time_balances),
         'pools': pools,
+        'pool_expense_tags': pool_expense_tags,
         'HOME_MONTHLY_EXPENSES_DURATION': HOME_MONTHLY_EXPENSES_DURATION,
         'HOME_POOL_HISTORY_DURATION': HOME_POOL_HISTORY_DURATION,
     })

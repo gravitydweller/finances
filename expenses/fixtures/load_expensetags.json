@@ -61,6 +61,20 @@
             "name": "volt expense",
             "source_pool": "volt"
         }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "utility expense",
+            "source_pool": "basic expenses"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "fields": {
+            "name": "project expense",
+            "source_pool": "soft expenses"
+        }
     }
     
 ]

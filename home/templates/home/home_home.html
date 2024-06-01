@@ -9,14 +9,20 @@
 
         <!-- Cards for each pool -->
         <div class="row">
-            {% for pool in pools %}
+            {% for pool, expense_tags in pool_expense_tags %}
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title" style="font-weight: bold; font-size: 1.5em;color: #484860;">{{ pool.name }}</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" >
                         <p>Current Balance: {{ pool.current_balance|floatformat:2 }}</p>
+                        <!-- Display Expense Tags for the current pool -->
+                        <ul style="font-weight: normal; font-size: 1.0em;color: #484860;" >
+                            {% for expense_tag in expense_tags %}
+                                <li style="font-weight: bold; font-size: 0.9em;color: #484860;" >{{ expense_tag }}</li>
+                            {% endfor %}
+                        </ul>
                         <!-- Add other pool details here if needed -->
                     </div>
                 </div>

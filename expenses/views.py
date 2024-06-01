@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
-from .models import Expense, ExpenseTag
+from .models import Expense, ExpenseTag, EXPENSE_DESCRIPTION_CHOICES
 from .form import ExpenseForm
 
 import json
@@ -65,92 +65,6 @@ def get_expenses_by_tag_chart_data():
 
 ##################################################################################################
 # EXPENSE_HOMEL VIEW
-'''
-def expense_home(request):
-    # CREATE NEW EXPENSE
-    if request.method == 'POST':
-        form = ExpenseForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('expense_home')
-    else:
-        form = ExpenseForm()
-
-    # EXPENSE LIST
-    expenses_list = Expense.objects.all().order_by('-date')
-
-    # DATA FOR CHART - Expenses over time
-    expenses = Expense.objects.all().order_by('date')
-    dates = [expense.date.strftime('%Y-%m-%d') for expense in expenses]
-    amounts = [expense.amount for expense in expenses]
-
-    # Convert data to JSON format for use in JavaScript
-    all_chart_data = {
-        'dates': dates,
-        'amounts': amounts,
-    }
-
-    # DATA FOR CHART - Expenses by category in the last X months
-    some_months_ago = datetime.now() - timedelta(days=EXPENSE_HOME_DURATION*30)
-    expenses_last_some_months = Expense.objects.filter(date__gte=some_months_ago)
-    
-    category_totals = {}
-
-    for expense in expenses_last_some_months:
-        category_name = expense.chategory.name
-        if category_name in category_totals:
-            category_totals[category_name] += expense.amount
-        else:
-            category_totals[category_name] = expense.amount
-
-    categories_chart_data = {
-        'categories': list(category_totals.keys()),
-        'amounts': list(category_totals.values()),
-    }
-
-    # DATA FOR CHART - Expenses by category in the last X months
-    tags = ExpenseTag.objects.all()  # Get all ExpenseTag objects
-
-    tag_names = []
-    tag_amounts = []
-
-    # Loop through each ExpenseTag object
-    for tag in tags:
-        # Filter expenses related to the current tag
-        expenses_for_tag = Expense.objects.filter(tag=tag)
-
-        # Calculate total amount for this tag
-        total_amount_for_tag = sum(expense.amount for expense in expenses_for_tag)
-
-        # Check if total amount for tag is greater than 0
-        if total_amount_for_tag > 0:
-            # Append tag name and total amount to lists
-            tag_names.append(tag.name)
-            tag_amounts.append(total_amount_for_tag)
-
-    # Create dictionary for chart data only if there are tags with non-zero sums
-    if tag_names:
-        tag_chart_data = {
-            'tags': tag_names,
-            'amounts': tag_amounts,
-        }
-    else:
-        tag_chart_data = None  # Set to None if there are no tags with non-zero sums
-
-
-    return render(request, 'expense/expense_home.html', {
-        'expenses': expenses_list,
-        'form': form,
-        'all_chart_data': json.dumps(all_chart_data),
-        'categories_chart_data': json.dumps(categories_chart_data),
-        'tag_chart_data': json.dumps(tag_chart_data),
-        'some_months_ago': EXPENSE_HOME_DURATION,
-    })
-
-
-'''
-
-
 def expense_home(request):
     if request.method == 'POST':
         if handle_expense_form_submission(request):
@@ -169,13 +83,10 @@ def expense_home(request):
         'categories_chart_data': json.dumps(categories_chart_data),
         'tag_chart_data': json.dumps(tag_chart_data),
         'some_months_ago': EXPENSE_HOME_DURATION,
+        
     }
 
     return render(request, 'expense/expense_home.html', context)
-
-
-
-
 
 
 
@@ -198,7 +109,7 @@ def expense_create(request):
             return redirect('expense_home')
     else:
         form = ExpenseForm()
-    return render(request, 'expense/expense_form.html', {'form': form})
+    return render(request, 'expense/expense_form.html', {'form': form, 'EXPENSE_DESCRIPTION_CHOICES' : EXPENSE_DESCRIPTION_CHOICES})
 
 ##################################################################################################
 # EXPENSE UPDATE VIEW

@@ -16,6 +16,16 @@
                             <h4 class="card-title">{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}</h4>
                         </div>
                         <div class="card-body">
+                            <div class="form-group">
+                                <label for="id_description">Description:</label>
+                                <select name="description" id="id_description" class="form-control">
+                                    <option value="">---------</option>
+                                    {% for choice in EXPENSE_DESCRIPTION_CHOICES %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- Include other form fields here -->
                             {{ form.as_p }}
                         </div>
                         <div class="card-footer">
@@ -27,4 +37,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Add event listener to the description dropdown
+    document.getElementById("id_description").addEventListener("change", function() {
+        var description = this.value;
+        var chategorySelect = document.getElementById("id_chategory");
+        
+        // Set the chategory based on the selected description
+        if (description === "utility expense") {
+            // Set the chategory to "Utility Expense"
+            chategorySelect.value = "utility expense";
+        } else {
+            // Clear the chategory selection
+            chategorySelect.value = "";
+        }
+    });
+</script>
+
 {% endblock %}

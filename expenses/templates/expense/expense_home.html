@@ -222,4 +222,31 @@
         </div>       
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var searchInput = document.getElementById('expenseSearch');
+        var expenseTable = document.getElementById('expenseTable').getElementsByTagName('tbody')[0];
+    
+        searchInput.addEventListener('keyup', function () {
+            var filter = searchInput.value.toLowerCase();
+            var rows = expenseTable.getElementsByTagName('tr');
+    
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var match = false;
+    
+                for (var j = 0; j < cells.length; j++) {
+                    if (cells[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+    
+                rows[i].style.display = match ? '' : 'none';
+            }
+        });
+    });
+    </script>
+
 {% endblock content %}

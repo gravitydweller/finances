@@ -19,6 +19,15 @@ class ExpenseChategory(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+# Define the choices for expense descriptions
+EXPENSE_DESCRIPTION_CHOICES = [
+    ('electricity', 'Electricity'),
+    ('natural_gas', 'Natural Gas'),
+    ('garbage', 'Garbage'),
+    ('water', 'Water'),
+    ('rtv', 'RTV'),
+    ('internet', 'Internet'),
+]
 
 class Expense(models.Model):
     tag = models.ForeignKey(ExpenseTag, on_delete=models.SET_NULL, null=True)
