@@ -1,36 +1,36 @@
 [
     {
-        "model": "expenses.expensechategory",
+        "model": "expenses.expensecategory",
         "fields": {
             "name": "emergency expense"
         }
     },
     {
-        "model": "expenses.expensechategory",
+        "model": "expenses.expensecategory",
         "fields": {
             "name": "loan expense"
         }
     },
     {
-        "model": "expenses.expensechategory",
+        "model": "expenses.expensecategory",
         "fields": {
             "name": "car expense"
         }
     },
     {
-        "model": "expenses.expensechategory",
+        "model": "expenses.expensecategory",
         "fields": {
             "name": "utility expense"
         }
     },
     {
-        "model": "expenses.expensechategory",
+        "model": "expenses.expensecategory",
         "fields": {
             "name": "gas expense"
         }
     },
     {
-        "model": "expenses.expensechategory",
+        "model": "expenses.expensecategory",
         "fields": {
             "name": "normal expense"
         }

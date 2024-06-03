@@ -125,7 +125,29 @@ def create_incomes_and_expenses_history_data(months_ago):
 
     return chart_data
 
+def calculate_total_income(months):
+    # Calculate the start date based on the specified number of months
+    start_date = timezone.now() - timedelta(days=30 * months)
+    
+    # Retrieve all Income instances within the specified time duration
+    incomes_within_duration = Income.objects.filter(date__gte=start_date)
+    
+    # Sum up the amounts of all retrieved incomes
+    total_income = incomes_within_duration.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+    
+    return total_income
 
+def calculate_total_expenses(months):
+    # Calculate the start date based on the specified number of months
+    start_date = timezone.now() - timedelta(days=30 * months)
+    
+    # Retrieve all Expense instances within the specified time duration
+    expenses_within_duration = Expense.objects.filter(date__gte=start_date)
+    
+    # Sum up the amounts of all retrieved expenses
+    total_expenses = expenses_within_duration.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+    
+    return total_expenses
 
 def home_home(request):
     pools = list(Pool.objects.all())  # Ensure we are dealing with a list of pool instances
@@ -143,6 +165,10 @@ def home_home(request):
     chart_data_time_balances = create_balance_history_all_pools_data(pools, HOME_POOL_HISTORY_DURATION)
 
 
+    total_incomes = calculate_total_income(TOTAL_DURATION)
+    total_expenses = calculate_total_expenses(TOTAL_DURATION)
+    adoult_ratio = total_incomes / total_expenses
+
     return render(request, 'home/home_home.html', {
         'chart_data': json.dumps(chart_data),
         'chart_data_time_balances': json.dumps(chart_data_time_balances),
@@ -150,4 +176,9 @@ def home_home(request):
         'pool_expense_tags': pool_expense_tags,
         'HOME_MONTHLY_EXPENSES_DURATION': HOME_MONTHLY_EXPENSES_DURATION,
         'HOME_POOL_HISTORY_DURATION': HOME_POOL_HISTORY_DURATION,
+        'TOTAL_DURATION' : TOTAL_DURATION,
+
+        'total_income' : total_incomes,
+        'total_expenses' : total_expenses,
+        'adoult_ratio' : adoult_ratio
     })

@@ -1,8 +1,10 @@
 # pools/models.py
 
+from django.db.models.signals import post_save
 from django.db import models
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
+from django.utils import timezone
 
 class Pool(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
@@ -24,13 +26,12 @@ class BalanceHistory(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Balance for {self.pool.name} on {self.date.strftime('%Y-%m-%d %H:%M:%S')}: {self.balance}"
-
+        return f"{self.pool.name} on {self.date.strftime('%Y-%m-%d %H:%M:%S')}: {self.balance}"
 
 
 
 class PoolTransfer(models.Model):
-    date = models.DateField()
+    date = models.DateTimeField()
     source_pool = models.ForeignKey(Pool, related_name='transfers_from', on_delete=models.CASCADE)
     destination_pool = models.ForeignKey(Pool, related_name='transfers_to', on_delete=models.CASCADE)
     amount = models.FloatField()

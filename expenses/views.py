@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
-from .models import Expense, ExpenseTag, EXPENSE_DESCRIPTION_CHOICES
+from .models import Expense, ExpenseTag, UTILITY_CHOICES
 from .form import ExpenseForm
 
 import json
@@ -26,7 +26,7 @@ def get_expenses_list():
 
 def get_expenses_over_time_chart_data(duration):
     some_months_ago = timezone.now() - timedelta(days=duration * 30)
-    expenses = Expense.objects.filter(date__gte=some_months_ago).order_by('date')
+    expenses = Expense.objects.all()#filter(date__gte=some_months_ago).order_by('date')
     dates = [expense.date.strftime('%Y-%m-%d') for expense in expenses]
     amounts = [expense.amount for expense in expenses]
     return {'dates': dates, 'amounts': amounts}
@@ -37,7 +37,7 @@ def get_expenses_by_category_chart_data():
 
     category_totals = {}
     for expense in expenses_last_some_months:
-        category_name = expense.chategory.name
+        category_name = expense.category.name
         if category_name in category_totals:
             category_totals[category_name] += expense.amount
         else:
@@ -109,7 +109,7 @@ def expense_create(request):
             return redirect('expense_home')
     else:
         form = ExpenseForm()
-    return render(request, 'expense/expense_form.html', {'form': form, 'EXPENSE_DESCRIPTION_CHOICES' : EXPENSE_DESCRIPTION_CHOICES})
+    return render(request, 'expense/expense_form.html', {'form': form, 'UTILITY_CHOICES' : UTILITY_CHOICES})
 
 ##################################################################################################
 # EXPENSE UPDATE VIEW

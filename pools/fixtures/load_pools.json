@@ -6,8 +6,8 @@
             "name": "hard times",
             "type": "reserve",
             "current_balance": 0.00,
-            "allocated_procentage": 11.00,
-            "allocated_fixed": 0.00
+            "allocated_procentage": 6.00,
+            "allocated_fixed": 85.00
         }
     },
     {
@@ -17,8 +17,8 @@
             "name": "good times",
             "type": "reserve",
             "current_balance": 0.00,
-            "allocated_procentage": 11.00,
-            "allocated_fixed": 0.00
+            "allocated_procentage": 4.00,
+            "allocated_fixed": 35.00
         }
     },
     {
@@ -28,7 +28,7 @@
             "name": "rigid expenses",
             "type": "cost",
             "current_balance": 0.00,
-            "allocated_procentage": 31.00,
+            "allocated_procentage": 36.00,
             "allocated_fixed": 0.00
         }
     },
@@ -39,7 +39,7 @@
             "name": "basic expenses",
             "type": "cost",
             "current_balance": 0.00,
-            "allocated_procentage": 42.00,
+            "allocated_procentage": 46.00,
             "allocated_fixed": 0.00
         }
     },
@@ -50,7 +50,7 @@
             "name": "soft expenses",
             "type": "cost",
             "current_balance": 0.00,
-            "allocated_procentage": 5.00,
+            "allocated_procentage": 8.00,
             "allocated_fixed": 0.00
         }
     },

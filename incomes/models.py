@@ -22,7 +22,7 @@ class Income(models.Model):
     tag = models.CharField(max_length=50, choices=INCOME_TAG_CHOICES,blank=True, null=True)
     amount = models.FloatField()
     description = models.CharField(max_length=200, default='', blank=True, null=True)
-    date = models.DateField()
+    date = models.DateTimeField()
     attachment = models.FileField(upload_to='incomes/attachments/', blank=True, null=True)
     allocated = models.BooleanField(default=False)
 

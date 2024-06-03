@@ -1,11 +1,9 @@
 # incomes/management/commands/fake_income.py
 
 import random
-from datetime import date
+from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from incomes.models import Income, Employer
-from allocations.models import allocate_income_to_pools
-from django.db.models import Count
 from pools.models import Pool, BalanceHistory
 
 class Command(BaseCommand):
@@ -36,43 +34,33 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         employers = Employer.objects.all()
-        tag_choices = ['salary'] * 9 + ['other']  # 90% chance of 'salary' tag
+        tag_choices = ['salary'] 
         
-        for i in range(100):  # Generate 100 fake income records
+        # Start generating fake income records for the previous year
+        start_date = date.today().replace(day=15) - timedelta(days=365)  
+        end_date = start_date + timedelta(days=365)  # One year from the start date
+        
+        # Generate income for each month
+        current_date = start_date
+        while current_date <= end_date:
             employer = random.choice(employers)
             tag = random.choice(tag_choices)
             amount = round(random.uniform(1980, 2180), 2)  # Random amount between 1980 and 2180
-            year = random.randint(2022, date.today().year)
-            month = random.randint(1, date.today().month)
-            day = 15  # Fixed day as 15th of the month
-            date_generated = date(year, month, day)
             
-            # Check if there is already one income entry for the same month
-            existing_incomes = Income.objects.filter(
+            # Create the income instance
+            income = Income.objects.create(
                 employer=employer,
-                date__year=year,
-                date__month=month
-            ).count()
+                tag=tag,
+                amount=amount,
+                date=current_date,
+                allocated=False
+            )
             
-            if existing_incomes >= 1:
-                self.stdout.write(self.style.WARNING(f'An income entry already exists for {employer} in {year}-{month}. Skipping...'))
-                continue
+            # Allocate income to pools
+            self.allocate_income_to_pools(income)
             
-            # Check if an income with the same date already exists
-            existing_income = Income.objects.filter(employer=employer, date=date_generated).exists()
-            if not existing_income:
-                # Create the income instance
-                income = Income.objects.create(
-                    employer=employer,
-                    tag=tag,
-                    amount=amount,
-                    date=date_generated,
-                    allocated=False
-                )
-                
-                # Allocate income to pools
-                self.allocate_income_to_pools(income)
-                
-                self.stdout.write(self.style.SUCCESS(f'Fake income created: {income}'))
-            else:
-                self.stdout.write(self.style.WARNING(f'An income with the same date already exists for {employer}'))
+            self.stdout.write(self.style.SUCCESS(f'Fake income created: {income}'))
+            
+            # Move to the next month
+            current_date = current_date.replace(day=15)  # Set the day to the 15th of the next month
+            current_date += timedelta(days=30)  # Assuming 30 days in a month
