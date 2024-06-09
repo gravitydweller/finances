@@ -5,28 +5,22 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Pool, BalanceHistory
 from .forms import PoolForm, PoolTransferForm
-from .utils import CurrentBalancesBarChart, BalanceHistoryPlot, PoolHistoryPlot
+from .utils import CurrentBalancesBarChart, BalanceHistoryPlot, PoolHistoryPlot, hex_to_rgba
 
 ################################################################################################
 # POOL HOME (view)
 ################################################################################################
 def pool_home(request):
     pools = Pool.objects.all()
-
-    data_current_balances = json.dumps(CurrentBalancesBarChart(pools))
-
-    data_reserve_pools = json.dumps(PoolHistoryPlot(pools.filter(type='reserve')))
-    data_cost_pools = json.dumps(PoolHistoryPlot(pools.filter(type='cost')))
-    data_investment_pools = json.dumps(PoolHistoryPlot(pools.filter(type='investment')))
-
         
     return render(request, 'pool/pool_home.html', {
         'pools': pools,
-        'data_current_balances': data_current_balances,
-        'data_reserve_pools': data_reserve_pools,
-        'data_cost_pools': data_cost_pools,
-        'data_investment_pools': data_investment_pools,
+        'data_current_balances': json.dumps(CurrentBalancesBarChart(pools)),
+        'data_reserve_pools': json.dumps(PoolHistoryPlot(pools.filter(type='reserve'))),
+        'data_cost_pools': json.dumps(PoolHistoryPlot(pools.filter(type='cost'))),
+        'data_investment_pools': json.dumps(PoolHistoryPlot(pools.filter(type='investment'))),
     })
+
 
 ################################################################################################
 # INDIVIDUAL POOL (view)
@@ -41,10 +35,17 @@ def pool_detail(request, pool_id):
     else:
         form = PoolForm(instance=pool)
 
+    # Prepare chart data with balance history and diluted colors
+    chart_data = BalanceHistoryPlot(BalanceHistory.objects.filter(pool=pool))
+    color = pool.color
+    diluted_color = hex_to_rgba(pool.color)
+    chart_data['colors'] = color
+    chart_data['diluted_colors'] = diluted_color
+    
     return render(request, 'pool/pool_detail.html', {
         'pool': pool,
         'form': form,
-        'chart_data': json.dumps(BalanceHistoryPlot(BalanceHistory.objects.filter(pool=pool))),
+        'chart_data': json.dumps(chart_data),
     })
 
 ################################################################################################
@@ -78,7 +79,8 @@ def pool_update(request, pool_id):
         form = PoolForm(request.POST, instance=pool)
         if form.is_valid():
             form.save()
-            return redirect('pool_list')
+            # Redirect to the pools home page after updating values in the database
+            return redirect('pool_home')  # Corrected URL name
     else:
-        form = PoolForm(instance=pool)
-    return render(request, 'pool/pool_form.html', {'form': form})
+        form = PoolForm()
+    return render(request, 'pool/pool_detail.html', {'form': form, 'pool': pool})

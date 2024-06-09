@@ -36,7 +36,7 @@ class Expense(models.Model):
     amount = models.FloatField()
     description = models.CharField(max_length=200, default='', blank=True, null=True)
     attachment = models.FileField(upload_to='expenses/attachments/', blank=True, null=True)
-    category = models.ForeignKey(ExpenseCategory, default='', on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(ExpenseCategory, default=1, on_delete=models.SET_NULL, null=True)
     def __str__(self):
         return f"{self.tag} - {self.date} - {self.description}"
 

@@ -8,7 +8,8 @@
 <div class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">{{ pool.name }} Details</h4>
@@ -20,7 +21,7 @@
                         <p>Allocated Fixed: {{ pool.allocated_fixed }}</p>
 
                         <!-- Form to update allocated fields -->
-                        <form method="post">
+                        <form method="post" action="{% url 'pool_update' pool.id %}">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="id_allocated_procentage">Allocated Percentage:</label>
@@ -35,11 +36,8 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Line plot of balances over time -->
-        <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Balance Over Time</h4>
@@ -57,8 +55,8 @@
                                         datasets: [{
                                             label: 'Balance',
                                             data: chartData.balances,
-                                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            backgroundColor: chartData.diluted_colors,
+                                            borderColor: chartData.colors,
                                             borderWidth: 1
                                         }]
                                     },
@@ -78,10 +76,12 @@
                                     }
                                 });
                             });
-                        </script>
+                            </script>
+                            
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

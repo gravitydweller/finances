@@ -9,31 +9,30 @@
 
         <!-- Reserve, Cost, and Investment Charts -->
         <div class="row">
-            <!-- RESERVE POOL BALANCES -->
-            <div class="col-md-4">
+            <!-- COST POOL BALANCES -->
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Reserve Pool Balances</h4>
-                        <p class="card-category">(last {{ some_months_ago }} months)</p>
+                        <h4 class="card-title">Cost Pool Balances</h4>
                     </div>
                     <div class="card-body">
-                        <canvas id="reservePoolChart"></canvas>
+                        <canvas id="costPoolChart"></canvas>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
-                                var ctx = document.getElementById('reservePoolChart').getContext('2d');
-                                var reserveData = JSON.parse('{{ data_reserve_pools|escapejs }}');
-
-                                var reservePoolChart = new Chart(ctx, {
+                                var ctx = document.getElementById('costPoolChart').getContext('2d');
+                                var costData = JSON.parse('{{ data_cost_pools|escapejs }}');
+                                var costPoolChart = new Chart(ctx, {
                                     type: 'line',
                                     data: {
-                                        labels: reserveData.dates,
-                                        datasets: Object.keys(reserveData.pools).map(function (key) {
-                                            var pool = reserveData.pools[key];
+                                        labels: costData.dates,
+                                        datasets: Object.keys(costData.pools).map(function (key) {
+                                            var pool = costData.pools[key];
                                             return {
                                                 label: key,
                                                 data: pool.balances,
                                                 borderColor: pool.color,
-                                                fill: true,
+                                                backgroundColor: pool.diluted_color,  // Use diluted color for background
+                                                fill: false,
                                                 borderWidth: 1
                                             };
                                         })
@@ -58,121 +57,25 @@
                     </div>
                 </div>
             </div>
-
-            <!-- COST POOL BALANCES -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h4 class="card-title">Cost Pool Balances</h4>
-                        <p class="card-category">(last {{ some_months_ago }} months)</p>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="costPoolChart"></canvas>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                            var ctx = document.getElementById('costPoolChart').getContext('2d');
-                            var costData = JSON.parse('{{ data_cost_pools|escapejs }}');
-                            var costPoolChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: costData.dates,
-                                    datasets: Object.keys(costData.pools).map(function (key) {
-                                        var pool = costData.pools[key];
-                                        return {
-                                            label: key,
-                                            data: pool.balances,
-                                            borderColor: pool.color,
-                                            fill: true,
-                                            borderWidth: 1
-                                        };
-                                    })
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        x: {
-                                            type: 'time',
-                                            time: {
-                                                unit: 'month'
-                                            }
-                                        },
-                                        y: {
-                                            beginAtZero: true
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                        </script>
-                    </div>
-                </div>
-            </div>
-
-            <!-- INVESTMENT POOL BALANCES -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h4 class="card-title">Investment Pool Balances</h4>
-                        <p class="card-category">(last {{ some_months_ago }} months)</p>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="investmentPoolChart"></canvas>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                            var ctx = document.getElementById('investmentPoolChart').getContext('2d');
-                            var investmentData = JSON.parse('{{ data_investment_pools|escapejs }}');
-                            var investmentPoolChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: investmentData.dates,
-                                    datasets: Object.keys(investmentData.pools).map(function (key) {
-                                        var pool = investmentData.pools[key];
-                                        return {
-                                            label: key,
-                                            data: pool.balances,
-                                            borderColor: pool.color,
-                                            fill: true,
-                                            borderWidth: 1
-                                        };
-                                    })
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        x: {
-                                            type: 'time',
-                                            time: {
-                                                unit: 'month'
-                                            }
-                                        },
-                                        y: {
-                                            beginAtZero: true
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                        </script>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </div> 
 
 
         <div class="row" >
             <!-- PLOT OF POOL BALANCES -->
-            <div class="col-md-6" >
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Current Balances</h4>
                     </div>
-                    <div class="card-bod" >
+                    <div class="card-body">
                         <canvas id="poolChart"></canvas>
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('poolChart').getContext('2d');
                                 var chartData = JSON.parse('{{ data_current_balances|escapejs }}');
+                                
                                 var poolChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
@@ -180,69 +83,78 @@
                                         datasets: [{
                                             label: 'Current Balance',
                                             data: chartData.current_balances,
-                                            backgroundColor: chartData.colors,
+                                            backgroundColor: chartData.diluted_colors,  // Use diluted colors for bars
+                                            borderColor: chartData.colors,  // Use original colors for borders
                                             borderWidth: 1
                                         }]
                                     },
                                     options: {
+                                        plugins: {
+                                            datalabels: {
+                                                anchor: 'end',
+                                                align: 'end',
+                                                color: function(context) {
+                                                    return chartData.colors[context.dataIndex]; // Use corresponding pool color for labels
+                                                },
+                                                font: {
+                                                    weight: 'bold'
+                                                },
+                                                formatter: function(value) {
+                                                    return value.toFixed(2);
+                                                }
+                                            }
+                                        },
+                                        legend: {
+                                            display: false  // Hide the legend
+                                        },
                                         scales: {
                                             y: {
                                                 beginAtZero: true
                                             }
+                                        },
+                                        onClick: function(evt, item) {
+                                            if (item.length > 0) {
+                                                var index = item[0].index;
+                                                var url = chartData.urls[index];
+                                                window.location.href = url;  // Redirect to pool detail page
+                                            }
+                                        },
+                                        animation: {
+                                            onComplete: function () {
+                                                var chart = this.chart;
+                                                var ctx = chart.ctx;
+                                                ctx.textAlign = 'center';
+                                                ctx.textBaseline = 'bottom';
+
+                                                this.data.datasets.forEach(function (dataset) {
+                                                    for (var i = 0; i < dataset.data.length; i++) {
+                                                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                                                        var yPos = model.y - 5;
+                                                        ctx.fillStyle = chartData.colors[i]; // Use corresponding pool color
+                                                        ctx.font = 'bold 14px Arial';
+                                                        ctx.fillText(dataset.data[i].toFixed(2), model.x, yPos);
+                                                    }
+                                                });
+                                            }
                                         }
                                     }
                                 });
-                            });
+
+                                // Add click event listener to redirect to pool detail page
+                                ctx.canvas.addEventListener('click', function(evt) {
+                                    var activePoint = poolChart.getElementsAtEventForMode(evt, 'nearest', {intersect: true}, true)[0];
+                                    if (activePoint) {
+                                        var poolId = chartData.pool_ids[activePoint.index]; // Assuming chartData also contains pool IDs
+                                        window.location.href = '/pools/' + poolId + '/'; // Redirect to pool detail page
+                                    }
+                                });
+
+                            });  
                         </script>
                     </div>
                 </div>
-            </div> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            </div>
+            <!-- ALL POOLS TABLE -->
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header card-header-primary">
@@ -278,23 +190,119 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Reserve, Cost, and Investment Charts -->
+        <div class="row">
+        <!-- RESERVE POOL BALANCES -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Reserve Pool Balances</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="reservePoolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var ctx = document.getElementById('reservePoolChart').getContext('2d');
+                                var reserveData = JSON.parse('{{ data_reserve_pools|escapejs }}');
+
+                                var reservePoolChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: reserveData.dates,
+                                        datasets: Object.keys(reserveData.pools).map(function (key) {
+                                            var pool = reserveData.pools[key];
+                                            return {
+                                                label: key,
+                                                data: pool.balances,
+                                                borderColor: pool.color,
+                                                fill: false,
+                                                borderWidth: 1
+                                            };
+                                        })
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: {
+                                                type: 'time',
+                                                time: {
+                                                    unit: 'month'
+                                                }
+                                            },
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- INVESTMENT POOL BALANCES -->
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Investment Pool Balances</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="investmentPoolChart"></canvas>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                            var ctx = document.getElementById('investmentPoolChart').getContext('2d');
+                            var investmentData = JSON.parse('{{ data_investment_pools|escapejs }}');
+                            var investmentPoolChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: investmentData.dates,
+                                    datasets: Object.keys(investmentData.pools).map(function (key) {
+                                        var pool = investmentData.pools[key];
+                                        return {
+                                            label: key,
+                                            data: pool.balances,
+                                            borderColor: pool.color,
+                                            fill: false,
+                                            borderWidth: 1
+                                        };
+                                    })
+                                },
+                                options: {
+                                    responsive: true,
+                                    scales: {
+                                        x: {
+                                            type: 'time',
+                                            time: {
+                                                unit: 'month'
+                                            }
+                                        },
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
     </div>
 </div>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var poolsData = JSON.parse('{{ pools_serialized|escapejs }}');
-        console.log(poolsData);
-
-        // Iterate over the pools data and print name and color
-        poolsData.forEach(function(pool) {
-            console.log('Pool Name:', pool.name);
-            console.log('Pool Color:', pool.color);
-        });
-
-    });
-</script>
 
 
 {% endblock %}

@@ -10,17 +10,18 @@
         <!-- Cards for each pool -->
         <div class="row">
             {% for pool, expense_tags in pool_expense_tags %}
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h4 class="card-title" style="font-weight: bold; font-size: 1.5em;color: #484860;">{{ pool.name }}</h4>
+                    <div class="card-header card-header-primary" style="background-color: {{ pool.color|safe }};">
+
+                        <h4 class="card-title" style="font-weight: bold; font-size: 1.3em;color: #010001;">{{ pool.name }} (€{{ pool.current_balance|floatformat:2 }}) </h4>
                     </div>
                     <div class="card-body" >
-                        <p>Current Balance: {{ pool.current_balance|floatformat:2 }}</p>
+                        <p Current style="font-weight: bold; font-size: 1.0em;color: {{ pool.color }};"> Pool atributes: </p>
                         <!-- Display Expense Tags for the current pool -->
-                        <ul style="font-weight: normal; font-size: 1.0em;color: #484860;" >
+                        <ul style="font-weight: normal; font-size: 0.9em;color: {{ pool.color }};" >
                             {% for expense_tag in expense_tags %}
-                                <li style="font-weight: bold; font-size: 0.9em;color: #484860;" >{{ expense_tag }}</li>
+                                <li style="font-weight: bold; font-size: 0.9em;color: {{ pool.color }};" >{{ expense_tag }}</li>
                             {% endfor %}
                         </ul>
                         <!-- Add other pool details here if needed -->
@@ -29,7 +30,7 @@
             </div>
             {% endfor %}
             <!-- Total Income Card -->
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Total Income in Last {{ TOTAL_DURATION }} Months</h4>
@@ -41,7 +42,7 @@
             </div>
 
             <!-- Total Expenses Card -->
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Total Expenses in Last {{ TOTAL_DURATION }} Months</h4>
@@ -53,7 +54,7 @@
             </div>
 
             <!-- Survival ratio Card -->
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Survival Ratio!</h4>
@@ -70,67 +71,10 @@
 
         <!-- PLOT OF EXPENSES AND INCOMES OVER TIME -->
         <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h4 class="card-title">Monthly Expenses and Incomes</h4>
-                        <p class="card-category">(last {{ HOME_MONTHLY_EXPENSES_DURATION }} months)</p>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="financeChart"></canvas>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                var ctx = document.getElementById('financeChart').getContext('2d');
-                                var chartData = JSON.parse('{{ chart_data|escapejs }}');
-                                var financeChart = new Chart(ctx, {
-                                    type: 'line',
-                                    data: {
-                                        labels: chartData.months,  // X-axis labels
-                                        datasets: [
-                                            {
-                                                label: 'Total Expenses',
-                                                data: chartData.total_expenses,  // Y-axis data for expenses
-                                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                                borderColor: 'rgba(255, 99, 132, 1)',
-                                                borderWidth: 1,
-                                                fill: false
-                                            },
-                                            {
-                                                label: 'Total Incomes',
-                                                data: chartData.total_incomes,  // Y-axis data for incomes
-                                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                                borderColor: 'rgba(54, 162, 235, 1)',
-                                                borderWidth: 1,
-                                                fill: false
-                                            }
-                                        ]
-                                    },
-                                    options: {
-                                        scales: {
-                                            x: {
-                                                title: {
-                                                    display: true,
-                                                    text: 'Month'
-                                                }
-                                            },
-                                            y: {
-                                                title: {
-                                                    display: true,
-                                                    text: 'Amount'
-                                                },
-                                                beginAtZero: true
-                                            }
-                                        }
-                                    }
-                                });
-                            });
-                        </script>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- POOL BALANCES -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Pools History</h4>
@@ -141,26 +85,23 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('historyPoolChart').getContext('2d');
-                                var chartData = JSON.parse('{{ chart_data_time_balances|escapejs }}');
+                                var poolData = JSON.parse('{{ data_pools|escapejs }}');
 
-                                //var pools = JSON.parse('{{ pools|escapejs }}'); // Parse pools object
-                                //var poolColors = pools.map(pool => pool.color); // Extract colors from pools object
-
-                                var datasets = Object.keys(chartData.balances).map(function (key) {
-                                    return {
-                                        label: key,
-                                        data: chartData.balances[key],
-                                        borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16), //poolColors[index], //
-                                        fill: false,
-                                        borderWidth: 1
-                                    };
-                                });
-
-                                var historyPoolChart = new Chart(ctx, {
+                                var poolChart = new Chart(ctx, {
                                     type: 'line',
                                     data: {
-                                        labels: chartData.dates,
-                                        datasets: datasets
+                                        labels: poolData.dates,
+                                        datasets: Object.keys(poolData.pools).map(function (key) {
+                                            var pool = poolData.pools[key];
+                                            return {
+                                                label: key,
+                                                data: pool.balances,
+                                                borderColor: pool.color,
+                                                backgroundColor: pool.diluted_color, // Add the diluted color
+                                                fill: false,
+                                                borderWidth: 1
+                                            };
+                                        })
                                     },
                                     options: {
                                         responsive: true,

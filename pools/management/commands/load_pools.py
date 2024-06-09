@@ -26,6 +26,7 @@ class Command(BaseCommand):
                     'current_balance': fields['current_balance'],
                     'allocated_procentage': fields['allocated_procentage'],
                     'allocated_fixed': fields['allocated_fixed'],
+                    'color': fields['color']
                 }
             )
         

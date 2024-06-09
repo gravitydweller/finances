@@ -10,24 +10,38 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <form method="post" enctype="multipart/form-data">
+                    <form id="expense-form" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="card-header card-header-primary">
                             <h4 class="card-title">{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}</h4>
                         </div>
                         <div class="card-body">
+                            <!-- Display form errors -->
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for field in form %}
+                                            {% for error in field.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {% for error in form.non_field_errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
                             <div class="form-group">
-                                <label for="id_description">Description:</label>
-                                <select name="description" id="id_description" class="form-control">
+                                <label for="id_utility_choice">Utility choice:</label>
+                                <select name="utility_choice" id="id_utility_choice" class="form-control">
                                     <option value="">---------</option>
                                     {% for choice in UTILITY_CHOICES %}
                                         <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <!-- Include other form fields here -->
                             {{ form.as_p }}
-                            
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Update{% else %}Create{% endif %}</button>
@@ -40,18 +54,55 @@
 </div>
 
 <script>
-    // Set the date field to the current date and time
-    var dateField = document.getElementById("id_date");
+    document.addEventListener("DOMContentLoaded", function() {
+        var form = document.getElementById("expense-form");
+        var utilityChoiceField = document.getElementById("id_utility_choice");
+
+        var descriptionField = document.getElementById("id_description");
+        var tagField = document.getElementById("id_tag");
+        var categoryField = document.getElementById("id_category");
+
+        // Set the date field to the current date and time
+        var dateField = document.getElementById("id_date");
         if (dateField) {
             var now = new Date();
             var formattedDate = now.toISOString().slice(0, 16);
             dateField.value = formattedDate;
         }
-    // Add event listener to the description dropdown
-    document.getElementById("id_description").addEventListener("change", function() {
 
-        
+        // Function to handle utility choice change
+        function handleUtilityChoiceChange() {
+            var selectedUtility = utilityChoiceField.value;
+
+            if (selectedUtility) {
+                // Construct the description string
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = now.getMonth(); // Get the current month (0-11)
+                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                var previousMonthName = monthNames[(month === 0) ? 11 : month - 1]; // Get the name of the previous month
+                var description = selectedUtility + " " + previousMonthName + " " + year;
+
+                // Update the tag, category, and description fields
+                form.elements["tag"].value = "utility expense";
+                form.elements["category"].value = "utility expense";
+                form.elements["description"].value = description;
+            } else {
+                // Reset the tag, category, and description fields
+                form.elements["tag"].value = "";
+                form.elements["category"].value = "";
+                form.elements["description"].value = "";
+            }
+        }
+
+        // Add event listener for utility choice change
+        utilityChoiceField.addEventListener("change", handleUtilityChoiceChange);
+
+        // Trigger utility choice change event initially
+        handleUtilityChoiceChange();
+
     });
 </script>
+
 
 {% endblock %}

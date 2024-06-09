@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
-from .models import Expense, ExpenseTag, UTILITY_CHOICES
+from .models import Expense, ExpenseTag, ExpenseCategory, UTILITY_CHOICES
 from .form import ExpenseForm
 
 import json
@@ -21,29 +21,12 @@ def handle_expense_form_submission(request):
         return True
     return False
 
-def get_expenses_list():
-    return Expense.objects.all().order_by('-date')
 
-def get_expenses_over_time_chart_data(duration):
-    some_months_ago = timezone.now() - timedelta(days=duration * 30)
-    expenses = Expense.objects.all()#filter(date__gte=some_months_ago).order_by('date')
-    dates = [expense.date.strftime('%Y-%m-%d') for expense in expenses]
+def get_expenses_over_time_chart_data():
+    expenses = Expense.objects.all()  # Adjust the filter if necessary
+    dates = [expense.date.strftime('%Y-%m-%d') for expense in expenses]  # Ensure dates are strings
     amounts = [expense.amount for expense in expenses]
     return {'dates': dates, 'amounts': amounts}
-
-def get_expenses_by_category_chart_data():
-    some_months_ago = timezone.now() - timedelta(days=EXPENSE_HOME_DURATION * 30)
-    expenses_last_some_months = Expense.objects.filter(date__gte=some_months_ago)
-
-    category_totals = {}
-    for expense in expenses_last_some_months:
-        category_name = expense.category.name
-        if category_name in category_totals:
-            category_totals[category_name] += expense.amount
-        else:
-            category_totals[category_name] = expense.amount
-
-    return {'categories': list(category_totals.keys()), 'amounts': list(category_totals.values())}
 
 def get_expenses_by_tag_chart_data():
     tags = ExpenseTag.objects.all()
@@ -54,13 +37,25 @@ def get_expenses_by_tag_chart_data():
         expenses_for_tag = Expense.objects.filter(tag=tag)
         total_amount_for_tag = sum(expense.amount for expense in expenses_for_tag)
         if total_amount_for_tag > 0:
-            tag_names.append(tag.name)
+            tag_names.append(tag.name)  # Ensure the tag name is a string
             tag_amounts.append(total_amount_for_tag)
 
     if tag_names:
         return {'tags': tag_names, 'amounts': tag_amounts}
     return None
 
+def get_expenses_by_category_chart_data():
+    expenses_last_some_months = Expense.objects.all()
+
+    category_totals = {}
+    for expense in expenses_last_some_months:
+        category_name = str(expense.category)  # Ensure the category is a string
+        if category_name in category_totals:
+            category_totals[category_name] += expense.amount
+        else:
+            category_totals[category_name] = expense.amount
+
+    return {'categories': list(category_totals.keys()), 'amounts': list(category_totals.values())}
 
 
 ##################################################################################################
@@ -71,8 +66,8 @@ def expense_home(request):
             return redirect('expense_home')
 
     form = ExpenseForm()
-    expenses_list = get_expenses_list()
-    all_chart_data = get_expenses_over_time_chart_data(EXPENSE_HOME_DURATION)
+    expenses_list = Expense.objects.all().order_by('-date')
+    all_chart_data = get_expenses_over_time_chart_data()
     categories_chart_data = get_expenses_by_category_chart_data()
     tag_chart_data = get_expenses_by_tag_chart_data()
 
@@ -82,8 +77,7 @@ def expense_home(request):
         'all_chart_data': json.dumps(all_chart_data),
         'categories_chart_data': json.dumps(categories_chart_data),
         'tag_chart_data': json.dumps(tag_chart_data),
-        'some_months_ago': EXPENSE_HOME_DURATION,
-        
+        #'some_months_ago': EXPENSE_HOME_DURATION,
     }
 
     return render(request, 'expense/expense_home.html', context)
@@ -109,7 +103,15 @@ def expense_create(request):
             return redirect('expense_home')
     else:
         form = ExpenseForm()
-    return render(request, 'expense/expense_form.html', {'form': form, 'UTILITY_CHOICES' : UTILITY_CHOICES})
+
+    context = {
+        'form': form,
+        'UTILITY_CHOICES': UTILITY_CHOICES,
+    }
+
+    return render(request, 'expense/expense_form.html', context)
+
+
 
 ##################################################################################################
 # EXPENSE UPDATE VIEW

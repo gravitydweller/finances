@@ -2,25 +2,7 @@
     {
         "model": "expenses.expensecategory",
         "fields": {
-            "name": "emergency expense"
-        }
-    },
-    {
-        "model": "expenses.expensecategory",
-        "fields": {
-            "name": "loan expense"
-        }
-    },
-    {
-        "model": "expenses.expensecategory",
-        "fields": {
-            "name": "car expense"
-        }
-    },
-    {
-        "model": "expenses.expensecategory",
-        "fields": {
-            "name": "utility expense"
+            "name": "normal expense"
         }
     },
     {
@@ -32,7 +14,25 @@
     {
         "model": "expenses.expensecategory",
         "fields": {
-            "name": "normal expense"
+            "name": "utility expense"
+        }
+    },
+    {
+        "model": "expenses.expensecategory",
+        "fields": {
+            "name": "car expense"
+        }
+    },
+    {
+        "model": "expenses.expensecategory",
+        "fields": {
+            "name": "loan expense"
+        }
+    },
+    {
+        "model": "expenses.expensecategory",
+        "fields": {
+            "name": "emergency expense"
         }
     }
     

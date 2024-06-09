@@ -25,6 +25,7 @@ from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from datetime import timedelta
 from pools.models import Pool, BalanceHistory
+from pools.utils import PoolHistoryPlot
 from incomes.models import Income
 from expenses.models import Expense, ExpenseTag
 import json
@@ -149,8 +150,14 @@ def calculate_total_expenses(months):
     
     return total_expenses
 
+################################################################################################
+# HOME HOME (view)
+################################################################################################
+
 def home_home(request):
-    pools = list(Pool.objects.all())  # Ensure we are dealing with a list of pool instances
+    pools = Pool.objects.all()
+
+    data_pools = json.dumps(PoolHistoryPlot(pools))
 
     # Retrieve ExpenseTags for each pool
     pool_expense_tags = []
@@ -158,27 +165,9 @@ def home_home(request):
         expense_tags = ExpenseTag.objects.filter(source_pool=pool)
         pool_expense_tags.append((pool, list(expense_tags.values_list('name', flat=True))))  # Append a tuple (pool, expense_tags)
 
-    # Create incomes and expenses history data
-    chart_data = create_incomes_and_expenses_history_data(HOME_MONTHLY_EXPENSES_DURATION)
-
-    # Create balance history data for all pools
-    chart_data_time_balances = create_balance_history_all_pools_data(pools, HOME_POOL_HISTORY_DURATION)
-
-
-    total_incomes = calculate_total_income(TOTAL_DURATION)
-    total_expenses = calculate_total_expenses(TOTAL_DURATION)
-    adoult_ratio = total_incomes / total_expenses
 
     return render(request, 'home/home_home.html', {
-        'chart_data': json.dumps(chart_data),
-        'chart_data_time_balances': json.dumps(chart_data_time_balances),
         'pools': pools,
+        'data_pools': data_pools,
         'pool_expense_tags': pool_expense_tags,
-        'HOME_MONTHLY_EXPENSES_DURATION': HOME_MONTHLY_EXPENSES_DURATION,
-        'HOME_POOL_HISTORY_DURATION': HOME_POOL_HISTORY_DURATION,
-        'TOTAL_DURATION' : TOTAL_DURATION,
-
-        'total_income' : total_incomes,
-        'total_expenses' : total_expenses,
-        'adoult_ratio' : adoult_ratio
     })

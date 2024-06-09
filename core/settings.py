@@ -20,6 +20,15 @@ load_dotenv()  # take environment variables from .env.
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Define the database file paths
+world_db_path = BASE_DIR / 'world_db.sqlite3'
+
+# Check if the file exists, and create it if it doesn't
+if not world_db_path.exists():
+    # Open the file in write mode to create it
+    with open(world_db_path, 'w'):
+        pass  # Pass to create an empty file
+
 # Define the URL path for media files
 MEDIA_URL = '/media/'
 
@@ -130,8 +139,12 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'db.sqlite3',
-        }
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # Corrected path using BASE_DIR
+        },
+        'world': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'world_db.sqlite3'),  # Corrected path using BASE_DIR
+        },
     }
 
 # Password validation

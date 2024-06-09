@@ -7,7 +7,8 @@
             "type": "reserve",
             "current_balance": 0.00,
             "allocated_procentage": 6.00,
-            "allocated_fixed": 85.00
+            "allocated_fixed": 85.00,
+            "color": "#856BE8"
         }
     },
     {
@@ -18,7 +19,8 @@
             "type": "reserve",
             "current_balance": 0.00,
             "allocated_procentage": 4.00,
-            "allocated_fixed": 35.00
+            "allocated_fixed": 35.00,
+            "color": "#AE6BE8"
         }
     },
     {
@@ -28,8 +30,9 @@
             "name": "rigid expenses",
             "type": "cost",
             "current_balance": 0.00,
-            "allocated_procentage": 36.00,
-            "allocated_fixed": 0.00
+            "allocated_procentage": 40.00,
+            "allocated_fixed": 0.00,
+            "color": "#B8BEE8"
         }
     },
     {
@@ -39,8 +42,9 @@
             "name": "basic expenses",
             "type": "cost",
             "current_balance": 0.00,
-            "allocated_procentage": 46.00,
-            "allocated_fixed": 0.00
+            "allocated_procentage": 50.00,
+            "allocated_fixed": 0.00,
+            "color": "#6BC9E8"
         }
     },
     {
@@ -50,8 +54,9 @@
             "name": "soft expenses",
             "type": "cost",
             "current_balance": 0.00,
-            "allocated_procentage": 8.00,
-            "allocated_fixed": 0.00
+            "allocated_procentage": 0.00,
+            "allocated_fixed": 40.00,
+            "color": "#6B79E8"
         }
     },
     {
@@ -62,7 +67,8 @@
             "type": "investment",
             "current_balance": 0.00,
             "allocated_procentage": 0.00,
-            "allocated_fixed": 45.00
+            "allocated_fixed": 45.00,
+            "color": "#6BA1E8"
         }
     }
 ]
