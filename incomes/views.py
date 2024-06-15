@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 from django.db.models import F, DecimalField
 from django.db.models.functions import Cast
 from collections import defaultdict
-from core.utilities import *
 
 def income_detail(request, income_id):
     income = Income.objects.get(id=income_id)

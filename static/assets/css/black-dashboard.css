@@ -54,10 +54,10 @@
     "Liberation Mono", "Courier New", monospace;
 
   /* my shit */
-  --my_primary_color: #7b7be0;
+  --my_primary_color:  #7b7be0; /* #7b7be0 */
   
-  --my_highlight_text_color: #7B7BE0;
-  --my_highlight_text_color_hover: #7BBBE0;
+  --my_highlight_text_color: #7B7BE0; /* #7B7BE0 */
+  --my_highlight_text_color_hover: #7BBBE0; /* #7BBBE0 */
 }
 *,
 *:before,

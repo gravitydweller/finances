@@ -2,8 +2,6 @@
 
 {% extends 'layouts/mybase.html' %}
 
-{% block title %}{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}{% endblock %}
-
 {% block content %}
 <div class="content">
     <div class="container-fluid">
@@ -16,7 +14,7 @@
                             <h4 class="card-title">{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}</h4>
                         </div>
                         <div class="card-body">
-                            <!-- Display form errors -->
+                            <!-- Display form  -->
                             {% if form.errors %}
                                 <div class="alert alert-danger">
                                     <ul>
@@ -31,12 +29,22 @@
                                     </ul>
                                 </div>
                             {% endif %}
-
+                            <!-- UTILITY CHOICES -->
                             <div class="form-group">
                                 <label for="id_utility_choice">Utility choice:</label>
                                 <select name="utility_choice" id="id_utility_choice" class="form-control">
-                                    <option value="">---------</option>
+                                    <option value="">select utility...</option>
                                     {% for choice in UTILITY_CHOICES %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- LOAN CHOICES -->
+                            <div class="form-group">
+                                <label for="id_loan_choice">Loan choice:</label>
+                                <select name="loan_choice" id="id_loan_choice" class="form-control">
+                                    <option value="">select loan...</option>
+                                    {% for choice in LOAN_CHOICES %}
                                         <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                                     {% endfor %}
                                 </select>
@@ -57,6 +65,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         var form = document.getElementById("expense-form");
         var utilityChoiceField = document.getElementById("id_utility_choice");
+        var loanChoiceField = document.getElementById("id_loan_choice");
 
         var descriptionField = document.getElementById("id_description");
         var tagField = document.getElementById("id_tag");
@@ -69,6 +78,13 @@
             var formattedDate = now.toISOString().slice(0, 16);
             dateField.value = formattedDate;
         }
+
+        /*
+        // Add event listener for utility choice change
+        utilityChoiceField.addEventListener("change", handleUtilityChoiceChange);
+
+        // Trigger utility choice change event initially
+        handleUtilityChoiceChange();
 
         // Function to handle utility choice change
         function handleUtilityChoiceChange() {
@@ -84,25 +100,22 @@
                 var description = selectedUtility + " " + previousMonthName + " " + year;
 
                 // Update the tag, category, and description fields
-                form.elements["tag"].value = "utility expense";
-                form.elements["category"].value = "utility expense";
-                form.elements["description"].value = description;
+                tagField.value = "utility expense";
+                categoryField.value = "utility expense";
+                descriptionField.value = description;
             } else {
                 // Reset the tag, category, and description fields
-                form.elements["tag"].value = "";
-                form.elements["category"].value = "";
-                form.elements["description"].value = "";
+                tagField.value = "";
+                categoryField.value = "normal expense"; // Default value when no utility choice is selected
+                descriptionField.value = "";
             }
         }
+        */
 
-        // Add event listener for utility choice change
-        utilityChoiceField.addEventListener("change", handleUtilityChoiceChange);
-
-        // Trigger utility choice change event initially
-        handleUtilityChoiceChange();
-
+        // Set default value for category field on page load
+        categoryField.value = "normal expense";
+        console.log("Category field set to 'normal expense' on page load.");
     });
 </script>
-
 
 {% endblock %}

@@ -17,7 +17,7 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('expenseChart').getContext('2d');
-                                var chartData = JSON.parse('{{ all_chart_data|escapejs }}');
+                                var chartData = JSON.parse('{{ all_data|escapejs }}');
                                 var expenseChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
@@ -25,8 +25,8 @@
                                         datasets: [{
                                             label: 'Expense',
                                             data: chartData.amounts,
-                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            backgroundColor: chartData.diluted_colors,
+                                            borderColor: chartData.colors,
                                             borderWidth: 1
                                         }]
                                     },
@@ -62,7 +62,7 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('categoryExpenseChart').getContext('2d');
-                                var chartData = JSON.parse('{{ categories_chart_data|escapejs }}');
+                                var chartData = JSON.parse('{{ categories_data|escapejs }}');
                                 var categoryExpenseChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
@@ -160,7 +160,7 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('tagChart').getContext('2d');
-                                var tagData = JSON.parse('{{ tag_chart_data|escapejs }}');
+                                var tagData = JSON.parse('{{ tag_data|escapejs }}');
                                 var tagChart = new Chart(ctx, {
                                     type: 'bar',  // You can change the chart type if needed
                                     data: {
@@ -168,8 +168,8 @@
                                         datasets: [{
                                             label: 'Total Amount',
                                             data: tagData.amounts,  // Y-axis data
-                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                            borderColor: 'rgba(54, 162, 235, 1)',
+                                            backgroundColor: tagData.diluted_colors,
+                                            borderColor: tagData.colors,
                                             borderWidth: 1
                                         }]
                                     },
@@ -195,7 +195,7 @@
                                                 var chart = this.chart;
                                                 var ctx = chart.ctx;
                                                 ctx.font = 'bold 14px Arial'; // Set font family and size here
-                                                ctx.fillStyle = "#636364";
+                                                ctx.fillStyle = tagData.colors;
                                                 ctx.textAlign = 'center';
                                                 ctx.textBaseline = 'bottom';
 

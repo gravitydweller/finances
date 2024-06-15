@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "pools",
     "allocations",
     "expenses",
+    "loans",
 
     "chartjs",
 

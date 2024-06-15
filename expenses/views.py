@@ -2,8 +2,6 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
-from .models import Expense, ExpenseTag, ExpenseCategory, UTILITY_CHOICES
-from .form import ExpenseForm
 
 import json
 import matplotlib
@@ -11,51 +9,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-from core.utilities import *
-
-
-def handle_expense_form_submission(request):
-    form = ExpenseForm(request.POST, request.FILES)
-    if form.is_valid():
-        form.save()
-        return True
-    return False
-
-
-def get_expenses_over_time_chart_data():
-    expenses = Expense.objects.all()  # Adjust the filter if necessary
-    dates = [expense.date.strftime('%Y-%m-%d') for expense in expenses]  # Ensure dates are strings
-    amounts = [expense.amount for expense in expenses]
-    return {'dates': dates, 'amounts': amounts}
-
-def get_expenses_by_tag_chart_data():
-    tags = ExpenseTag.objects.all()
-    tag_names = []
-    tag_amounts = []
-
-    for tag in tags:
-        expenses_for_tag = Expense.objects.filter(tag=tag)
-        total_amount_for_tag = sum(expense.amount for expense in expenses_for_tag)
-        if total_amount_for_tag > 0:
-            tag_names.append(tag.name)  # Ensure the tag name is a string
-            tag_amounts.append(total_amount_for_tag)
-
-    if tag_names:
-        return {'tags': tag_names, 'amounts': tag_amounts}
-    return None
-
-def get_expenses_by_category_chart_data():
-    expenses_last_some_months = Expense.objects.all()
-
-    category_totals = {}
-    for expense in expenses_last_some_months:
-        category_name = str(expense.category)  # Ensure the category is a string
-        if category_name in category_totals:
-            category_totals[category_name] += expense.amount
-        else:
-            category_totals[category_name] = expense.amount
-
-    return {'categories': list(category_totals.keys()), 'amounts': list(category_totals.values())}
+from .utils import handle_expense_form_submission, AllExpensesBarChart, EXPENSES_BY_TAG_PLOT, EXPENSES_BY_CATEGORY_PLOT, Expense, ExpenseForm, ExpenseTag, ExpenseCategory, UTILITY_CHOICES
 
 
 ##################################################################################################
@@ -67,24 +21,19 @@ def expense_home(request):
 
     form = ExpenseForm()
     expenses_list = Expense.objects.all().order_by('-date')
-    all_chart_data = get_expenses_over_time_chart_data()
-    categories_chart_data = get_expenses_by_category_chart_data()
-    tag_chart_data = get_expenses_by_tag_chart_data()
+    all_data = AllExpensesBarChart()
+    categories_data = EXPENSES_BY_CATEGORY_PLOT()
+    tag_data = EXPENSES_BY_TAG_PLOT()
 
     context = {
         'expenses': expenses_list,
         'form': form,
-        'all_chart_data': json.dumps(all_chart_data),
-        'categories_chart_data': json.dumps(categories_chart_data),
-        'tag_chart_data': json.dumps(tag_chart_data),
-        #'some_months_ago': EXPENSE_HOME_DURATION,
+        'all_data': json.dumps(all_data),
+        'categories_data': json.dumps(categories_data),
+        'tag_data': json.dumps(tag_data),
     }
 
     return render(request, 'expense/expense_home.html', context)
-
-
-
-
 
 
 ##################################################################################################
@@ -93,9 +42,17 @@ def expense_detail(request, expense_id):
     expense = get_object_or_404(Expense, id=expense_id)
     return render(request, 'expense/expense_detail.html', {'expense': expense})
 
+
 ##################################################################################################
 # EXPENSE CREATE VIEW
 def expense_create(request):
+
+    # Fetch all ExpenseTags containing the word "loan" in their name
+    loan_tags = list(ExpenseTag.objects.filter(name__icontains="loan"))
+    
+    # Prepare LOAN_CHOICES in the format [('tag_id', 'Tag Name')]
+    LOAN_CHOICES = [(tag.name, tag.name) for tag in loan_tags]
+
     if request.method == 'POST':
         form = ExpenseForm(request.POST, request.FILES)
         if form.is_valid():
@@ -107,9 +64,26 @@ def expense_create(request):
     context = {
         'form': form,
         'UTILITY_CHOICES': UTILITY_CHOICES,
+        'LOAN_CHOICES': LOAN_CHOICES,
     }
 
     return render(request, 'expense/expense_form.html', context)
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

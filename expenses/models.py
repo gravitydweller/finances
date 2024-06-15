@@ -8,6 +8,7 @@ from pools.models import Pool, BalanceHistory
 class ExpenseTag(models.Model):
     name = models.CharField(max_length=50)
     source_pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    color = models.CharField(max_length=50, default='#FFFFFF')
 
     def __str__(self):
         return f"{self.name}"
@@ -18,6 +19,9 @@ class ExpenseCategory(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+
 
 # Define the choices for expense descriptions
 UTILITY_CHOICES = [

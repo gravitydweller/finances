@@ -6,12 +6,7 @@ from django.db.models.functions import Cast
 from datetime import datetime, timedelta
 from django.urls import reverse
 
-def hex_to_rgba(hex_color, alpha=0.08):
-    hex_color = hex_color.lstrip('#')
-    r = int(hex_color[0:2], 16)
-    g = int(hex_color[2:4], 16)
-    b = int(hex_color[4:6], 16)
-    return f'rgba({r}, {g}, {b}, {alpha})'
+from core.utils import hex_to_rgba
 
 
 ################################################################################################
@@ -78,9 +73,6 @@ def PoolHistoryPlot(queryset, time_period='last_year'):
     pools_histories = {pool.name: {'balances': [], 'color': pool.color, 'diluted_color': hex_to_rgba(pool.color)} for pool in queryset}
     # Initialize a set to store unique dates
     dates_set = set()
-
-    # Fetch all BalanceHistory records for the specified pools
-    #balance_histories = BalanceHistory.objects.filter(pool__in=queryset).order_by('date')
 
     # Filter balance history records based on start date
     balance_histories = BalanceHistory.objects.filter(

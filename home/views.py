@@ -16,8 +16,6 @@ from django.utils import timezone
 
 from django.db.models import Sum, ExpressionWrapper, F, DecimalField
 
-from core.utilities import *
-
 import logging
 
 from django.db.models import ExpressionWrapper, F, DecimalField

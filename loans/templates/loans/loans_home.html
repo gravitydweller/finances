@@ -1,0 +1,51 @@
+<!-- loans/templates/loans/loans_home.html -->
+
+{% extends 'layouts/mybase.html' %}
+{% load static %}
+{% block content %}
+
+<div class="content">
+    <div class="container-fluid">
+
+        <!-- Cards for each loan -->
+        {% for progress in loan_progress %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <!-- Add image on the left side -->
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                {% if progress.loan.image %}
+                                    <img src="{{ progress.loan.image.url }}" alt="Loan Image" style="height: 50px;">
+                                {% else %}
+                                    <!-- Placeholder image if no image is available -->
+                                    <img src="{% static 'placeholder_image.png' %}" alt="Placeholder Image" style="height: 50px;">
+                                {% endif %}
+                            </div>
+                            <div class="col">
+                                <h4 class="card-title">{{ progress.loan.name }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>Amount: {{ progress.loan.amount }}</p>
+                        <p>Duration (months): {{ progress.loan.duration_months }}</p>
+                        <p>Start Date: {{ progress.loan.start_date }}</p>
+                        <p>End Date: {{ progress.loan.end_date }}</p>
+                        <p>Total Paid: {{ progress.total_paid }}</p>
+                        <p>Remaining Amount: {{ progress.remaining_amount }}</p>
+                        <!-- You can add more loan details here if needed -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+

@@ -3,8 +3,9 @@
         "model": "expenses.expensetag",
         "pk": 1,
         "fields": {
-            "name": "food",
-            "source_pool": "basic expenses"
+            "name": "groceries",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
         }
     },
     {
@@ -12,71 +13,98 @@
         "pk": 2,
         "fields": {
             "name": "self-care",
-            "source_pool": "basic expenses"
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "pk": 2,
+        "fields": {
+            "name": "home-care",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 3,
         "fields": {
-            "name": "NLB-bill",
-            "source_pool": "rigid expenses"
+            "name": "home maintenance",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 4,
         "fields": {
-            "name": "weed",
-            "source_pool": "basic expenses"
+            "name": "NLB",
+            "source_pool": "rigid expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 5,
         "fields": {
-            "name": "online expense",
-            "source_pool": "soft expenses"
+            "name": "UniCredit Bank",
+            "source_pool": "rigid expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 6,
         "fields": {
-            "name": "gas",
-            "source_pool": "basic expenses"
+            "name": "weed",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 7,
         "fields": {
-            "name": "wolt/glovo",
-            "source_pool": "basic expenses"
+            "name": "online expense",
+            "source_pool": "soft expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 8,
         "fields": {
-            "name": "emergency cost",
-            "source_pool": "hard times"
+            "name": "gas",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
+        }
+    },
+    {
+        "model": "expenses.expensetag",
+        "pk": 9,
+        "fields": {
+            "name": "wolt/glovo",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 10,
         "fields": {
-            "name": "utility expense",
-            "source_pool": "basic expenses"
+            "name": "emergency cost",
+            "source_pool": "hard times",
+            "color": "#FFFFFF"
         }
     },
     {
         "model": "expenses.expensetag",
         "pk": 11,
         "fields": {
-            "name": "project expense",
-            "source_pool": "soft expenses"
+            "name": "utility",
+            "source_pool": "basic expenses",
+            "color": "#FFFFFF"
         }
     }
 ]
