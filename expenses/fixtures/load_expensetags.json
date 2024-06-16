@@ -23,7 +23,7 @@
         "fields": {
             "name": "home-care",
             "source_pool": "basic expenses",
-            "color": "#FFFFFF"
+            "color": "#FF756E"
         }
     },
     {
@@ -41,7 +41,7 @@
         "fields": {
             "name": "NLB",
             "source_pool": "rigid expenses",
-            "color": "#FFFFFF"
+            "color": "#28007D"
         }
     },
     {
@@ -77,7 +77,7 @@
         "fields": {
             "name": "gas",
             "source_pool": "basic expenses",
-            "color": "#FFFFFF"
+            "color": "#FFF170"
         }
     },
     {

@@ -70,23 +70,6 @@ def expense_create(request):
     return render(request, 'expense/expense_form.html', context)
 
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ##################################################################################################
 # EXPENSE UPDATE VIEW
 def expense_update(request, expense_id):

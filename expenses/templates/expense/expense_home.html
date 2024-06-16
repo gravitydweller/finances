@@ -18,12 +18,14 @@
                             document.addEventListener('DOMContentLoaded', function () {
                                 var ctx = document.getElementById('expenseChart').getContext('2d');
                                 var chartData = JSON.parse('{{ all_data|escapejs }}');
+
+                            
                                 var expenseChart = new Chart(ctx, {
                                     type: 'bar',
                                     data: {
                                         labels: chartData.dates,
                                         datasets: [{
-                                            label: 'Expense',
+                                            label: 'All Expenses',
                                             data: chartData.amounts,
                                             backgroundColor: chartData.diluted_colors,
                                             borderColor: chartData.colors,
@@ -31,6 +33,11 @@
                                         }]
                                     },
                                     options: {
+                                        plugins: {
+                                            legend: {
+                                                display: false  // Disable legend
+                                            }
+                                        },
                                         scales: {
                                             x: {
                                                 type: 'time',
@@ -41,6 +48,25 @@
                                             },
                                             y: {
                                                 beginAtZero: true
+                                            }
+                                        },
+                                        // Add annotations
+                                        animation: {
+                                            onComplete: function () {
+                                                var chart = this.chart;
+                                                var ctx = chart.ctx;
+                                                ctx.font = 'bold 14px Arial'; // Set font family and size here
+                                                ctx.fillStyle = "#636364";
+                                                ctx.textAlign = 'center';
+                                                ctx.textBaseline = 'bottom';
+
+                                                this.data.datasets.forEach(function (dataset) {
+                                                    for (var i = 0; i < dataset.data.length; i++) {
+                                                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                                                        var yPos = model.y - 5; // Adjust position here
+                                                        ctx.fillText(dataset.data[i].toFixed(2), model.x, yPos); // Format to 2 decimal places
+                                                    }
+                                                });
                                             }
                                         }
                                     }
@@ -132,7 +158,7 @@
                                     {% for expense in expenses %}
                                     <tr>
                                         <td>{{ expense.tag }}</td>
-                                        <td>{{ expense.chategory }}</td>
+                                        <td>{{ expense.category }}</td>
                                         <td>{{ expense.amount|floatformat:2 }}</td>
                                         <td>{{ expense.date }}</td>
                                         <td>{{ expense.description }}</td>

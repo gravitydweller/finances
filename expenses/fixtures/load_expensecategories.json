@@ -28,6 +28,12 @@
         "fields": {
             "name": "emergency expense"
         }
+    },
+    {
+        "model": "expenses.expensecategory",
+        "fields": {
+            "name": "loan expense"
+        }
     }
     
 ]

@@ -1,6 +1,5 @@
 <!-- templates/layouts/mybase.html -->
-
-<!DOCTYPE html>
+<<!DOCTYPE html>
 {% load i18n static admin_black %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -14,8 +13,7 @@
     {% block extrastyle %}{% endblock extrastyle %}
     
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <!-- No script tags for JavaScript files here -->
 </head>
 
 <body class="{% block bodyclass %}{% endblock bodyclass %}">
@@ -77,3 +75,4 @@
 </body>
 
 </html>
+

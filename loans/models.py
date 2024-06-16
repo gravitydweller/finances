@@ -14,7 +14,7 @@ class Loan(models.Model):
     start_date = models.DateTimeField()
     image = models.ImageField(upload_to='loans/images/', blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
-
+    source_pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 
@@ -41,7 +41,7 @@ def create_expense_tag_for_loan(sender, instance, created, **kwargs):
     if created:
         # Assuming you have a default pool or you can set one dynamically
         default_pool = Pool.objects.first()  # Change this as per your logic
-        ExpenseTag.objects.create(name=f"{instance.name} loan", source_pool=default_pool)
+        ExpenseTag.objects.create(name=f"{instance.name} loan", source_pool=instance.source_pool)
 
 # Connect the signal to the create_expense_tag_for_loan function
 post_save.connect(create_expense_tag_for_loan, sender=Loan)

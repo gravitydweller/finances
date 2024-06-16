@@ -1,6 +1,11 @@
 <!-- expenses/templates/expense/expense_form.html -->
 
 {% extends 'layouts/mybase.html' %}
+{% load static %}
+
+{% block extrajs %}
+    <script src="{% static 'expense/js/expense_form.js' %}"></script>
+{% endblock extrajs %}
 
 {% block content %}
 <div class="content">
@@ -14,7 +19,7 @@
                             <h4 class="card-title">{% if form.instance.pk %}Update Expense{% else %}Create Expense{% endif %}</h4>
                         </div>
                         <div class="card-body">
-                            <!-- Display form  -->
+                            <!-- Display form errors if any -->
                             {% if form.errors %}
                                 <div class="alert alert-danger">
                                     <ul>
@@ -60,62 +65,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var form = document.getElementById("expense-form");
-        var utilityChoiceField = document.getElementById("id_utility_choice");
-        var loanChoiceField = document.getElementById("id_loan_choice");
-
-        var descriptionField = document.getElementById("id_description");
-        var tagField = document.getElementById("id_tag");
-        var categoryField = document.getElementById("id_category");
-
-        // Set the date field to the current date and time
-        var dateField = document.getElementById("id_date");
-        if (dateField) {
-            var now = new Date();
-            var formattedDate = now.toISOString().slice(0, 16);
-            dateField.value = formattedDate;
-        }
-
-        /*
-        // Add event listener for utility choice change
-        utilityChoiceField.addEventListener("change", handleUtilityChoiceChange);
-
-        // Trigger utility choice change event initially
-        handleUtilityChoiceChange();
-
-        // Function to handle utility choice change
-        function handleUtilityChoiceChange() {
-            var selectedUtility = utilityChoiceField.value;
-
-            if (selectedUtility) {
-                // Construct the description string
-                var now = new Date();
-                var year = now.getFullYear();
-                var month = now.getMonth(); // Get the current month (0-11)
-                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                var previousMonthName = monthNames[(month === 0) ? 11 : month - 1]; // Get the name of the previous month
-                var description = selectedUtility + " " + previousMonthName + " " + year;
-
-                // Update the tag, category, and description fields
-                tagField.value = "utility expense";
-                categoryField.value = "utility expense";
-                descriptionField.value = description;
-            } else {
-                // Reset the tag, category, and description fields
-                tagField.value = "";
-                categoryField.value = "normal expense"; // Default value when no utility choice is selected
-                descriptionField.value = "";
-            }
-        }
-        */
-
-        // Set default value for category field on page load
-        categoryField.value = "normal expense";
-        console.log("Category field set to 'normal expense' on page load.");
-    });
-</script>
-
 {% endblock %}

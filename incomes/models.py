@@ -20,11 +20,15 @@ class Employer(models.Model):
 class Income(models.Model):
     employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, blank=True, null=True)
     tag = models.CharField(max_length=50, choices=INCOME_TAG_CHOICES,blank=True, null=True)
-    amount = models.FloatField()
+    amount = models.FloatField() 
+    salary = models.FloatField(default=0)
+    gas_reimbursement = models.FloatField(default=0)
+    food_reimbursement = models.FloatField(default=0)
     description = models.CharField(max_length=200, default='', blank=True, null=True)
     date = models.DateTimeField()
     attachment = models.FileField(upload_to='incomes/attachments/', blank=True, null=True)
     allocated = models.BooleanField(default=False)
+    
 
     def __str__(self):
         return f"{self.amount} from {self.employer}"

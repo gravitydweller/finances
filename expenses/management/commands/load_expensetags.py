@@ -21,7 +21,8 @@ class Command(BaseCommand):
             source_pool = Pool.objects.get(name=source_pool_name)
             ExpenseTag.objects.create(  # Updated model name
                 name=fields['name'],
-                source_pool=source_pool
+                source_pool=source_pool,
+                color=fields['color'],
             )
-        
+            
         self.stdout.write(self.style.SUCCESS('Expense tags data loaded successfully'))
