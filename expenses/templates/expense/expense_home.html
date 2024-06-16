@@ -49,25 +49,6 @@
                                             y: {
                                                 beginAtZero: true
                                             }
-                                        },
-                                        // Add annotations
-                                        animation: {
-                                            onComplete: function () {
-                                                var chart = this.chart;
-                                                var ctx = chart.ctx;
-                                                ctx.font = 'bold 14px Arial'; // Set font family and size here
-                                                ctx.fillStyle = "#636364";
-                                                ctx.textAlign = 'center';
-                                                ctx.textBaseline = 'bottom';
-
-                                                this.data.datasets.forEach(function (dataset) {
-                                                    for (var i = 0; i < dataset.data.length; i++) {
-                                                        var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
-                                                        var yPos = model.y - 5; // Adjust position here
-                                                        ctx.fillText(dataset.data[i].toFixed(2), model.x, yPos); // Format to 2 decimal places
-                                                    }
-                                                });
-                                            }
                                         }
                                     }
                                 });
