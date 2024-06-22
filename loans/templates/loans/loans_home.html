@@ -1,11 +1,64 @@
 <!-- loans/templates/loans/loans_home.html -->
-
 {% extends 'layouts/mybase.html' %}
 {% load static %}
+{% block extrajs %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            {% for progress in loan_progress %}
+                var ctx_{{ progress.loan.id }} = document.getElementById('chart_{{ progress.loan.id }}').getContext('2d');
+                var chart_{{ progress.loan.id }} = new Chart(ctx_{{ progress.loan.id }}, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Amount', 'Total Paid'],
+                        datasets: [{
+                            label: '{{ progress.loan.name }}',
+                            data: [
+                                {{ progress.remaining_amount }},
+                                {{ progress.total_paid }},
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)', // Red for Amount
+                                'rgba(54, 162, 235, 0.2)', // Blue for Total Paid
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.label + ': $' + tooltipItem.raw.toFixed(2);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            {% endfor %}
+        });
+    </script>
+{% endblock extrajs %}
 {% block content %}
-
 <div class="content">
     <div class="container-fluid">
+
+        <!-- Add Loan Button -->
+        <div class="row mb-3">
+            <div class="col-md-12 text-right">
+                <a href="{% url 'loan_create' %}" class="btn btn-primary">Add Loan</a>
+            </div>
+        </div>
 
         <!-- Cards for each loan -->
         {% for progress in loan_progress %}
@@ -25,16 +78,18 @@
                             </div>
                             <div class="col">
                                 <h4 class="card-title">{{ progress.loan.name }}</h4>
+                                <p>Start Date: {{ progress.loan.start_date|date:"Y-m-d" }}</p>
+                                <p>End Date: {{ progress.loan.end_date|date:"Y-m-d" }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
+                        <div style="width: 100%; height: 200px;">
+                            <canvas id="chart_{{ progress.loan.id }}"></canvas>
+                        </div>
                         <p>Amount: {{ progress.loan.amount }}</p>
-                        <p>Duration (months): {{ progress.loan.duration_months }}</p>
-                        <p>Start Date: {{ progress.loan.start_date }}</p>
-                        <p>End Date: {{ progress.loan.end_date }}</p>
-                        <p>Total Paid: {{ progress.total_paid }}</p>
-                        <p>Remaining Amount: {{ progress.remaining_amount }}</p>
+                        <p>Total Paid: {{ progress.total_paid }} ({{ progress.procent_total_paid}} %)</p>
+                        <p>Remaining Amount: {{ progress.remaining_amount }} ({{ progress.procent_remaining_amount}} %)</p>
                         <!-- You can add more loan details here if needed -->
                     </div>
                 </div>
@@ -45,7 +100,3 @@
 </div>
 
 {% endblock %}
-
-
-
-

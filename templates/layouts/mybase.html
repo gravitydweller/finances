@@ -1,5 +1,5 @@
 <!-- templates/layouts/mybase.html -->
-<<!DOCTYPE html>
+<!DOCTYPE html>
 {% load i18n static admin_black %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -25,13 +25,12 @@
                 </a>
             </div>
             <div class="sidebar-wrapper">
-                <!-- INCOME BUTTON -->
                 <ul class="nav">
+                    <!-- INCOME BUTTON -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'pool_home' %}">
                             <i class="material-icons">token</i>
                             <p>Pools</p>
-                        </a>
                         </a>
                     </li>
                     <!-- EXPENSE BUTTON -->
@@ -46,6 +45,7 @@
                         <a class="nav-link" href="{% url 'income_home' %}">
                             <i class="material-icons">receipt</i>
                             <p>Income</p>
+                        </a>
                     </li>
                     <!-- Add Loan Button -->
                     <li class="nav-item">
@@ -75,4 +75,3 @@
 </body>
 
 </html>
-

@@ -30,10 +30,10 @@
             </div>
             {% endfor %}
             <!-- Total Income Card -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Total Income in Last {{ TOTAL_DURATION }} Months</h4>
+                        <h4 class="card-title">Total Income in Last {{ months }} Months</h4>
                     </div>
                     <div class="card-body">
                         <p>Total Income: {{ total_income|floatformat:2 }}</p>
@@ -42,10 +42,10 @@
             </div>
 
             <!-- Total Expenses Card -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Total Expenses in Last {{ TOTAL_DURATION }} Months</h4>
+                        <h4 class="card-title">Total Expenses in Last {{ months }} Months</h4>
                     </div>
                     <div class="card-body">
                         <p>Total Expenses: {{ total_expenses|floatformat:2 }}</p>
@@ -53,14 +53,30 @@
                 </div>
             </div>
 
-            <!-- Survival ratio Card -->
-            <div class="col-md-4">
+            <!-- Survival Ratio Card -->
+            <div class="col-md-3">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Survival Ratio!</h4>
                     </div>
                     <div class="card-body">
-                        <p>Adoult Ratio: {{ adoult_ratio|floatformat:2 }}</p>
+                        {% if survival_ratio is not None %}
+                            <p>Survival Ratio: {{ survival_ratio|floatformat:2 }}</p>
+                        {% else %}
+                            <p>Survival Ratio: Not applicable (Total expenses are zero)</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Card -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Budget</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Budget: {{ budget|floatformat:2 }}</p>
                     </div>
                 </div>
             </div>

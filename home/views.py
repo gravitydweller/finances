@@ -7,7 +7,7 @@ from incomes.models import Income
 from pools.models import Pool, BalanceHistory
 import json
 from django.db.models.functions import Cast
-
+from django.db.models import Sum
 from django.db.models import DecimalField
 from datetime import date, timedelta
 from django.utils.timezone import now
@@ -148,14 +148,32 @@ def calculate_total_expenses(months):
     
     return total_expenses
 
+def calculate_budget():
+    budget = Pool.objects.aggregate(total_budget=Sum('current_balance'))['total_budget']
+
+    return budget
+
 ################################################################################################
 # HOME HOME (view)
 ################################################################################################
 
 def home_home(request):
+    months = 12
     pools = Pool.objects.all()
 
     data_pools = json.dumps(PoolHistoryPlot(pools))
+
+    budget = calculate_budget()
+
+    # Calculate total income and total expenses for a given number of months (e.g., 6 months)
+    total_income = calculate_total_income(months)
+    total_expenses = calculate_total_expenses(months)
+
+    # Handle division by zero
+    if total_expenses == 0:
+        survival_ratio = None  # or set to a default value, e.g., 0
+    else:
+        survival_ratio = total_income / total_expenses
 
     # Retrieve ExpenseTags for each pool
     pool_expense_tags = []
@@ -163,9 +181,13 @@ def home_home(request):
         expense_tags = ExpenseTag.objects.filter(source_pool=pool)
         pool_expense_tags.append((pool, list(expense_tags.values_list('name', flat=True))))  # Append a tuple (pool, expense_tags)
 
-
     return render(request, 'home/home_home.html', {
         'pools': pools,
         'data_pools': data_pools,
         'pool_expense_tags': pool_expense_tags,
+        'budget': budget,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'survival_ratio': survival_ratio,
+        'months':months
     })
